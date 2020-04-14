@@ -1,0 +1,47 @@
+import tensorflow as tf
+from tensorflow_core.python.keras.layers import Conv2D
+
+from models.ConvBatchLayer import ConvBatchLayer
+
+
+class Z2Model(tf.keras.Model):
+
+    def __init__(self):
+        super(Z2Model, self).__init__()
+        # self.gcnn1 = tf.keras.layers.Conv2D(filters=20, kernel_size=(3, 3), activation='relu')
+        # self.gcnn2 = tf.keras.layers.Conv2D(filters=20, kernel_size=(3, 3), activation='relu')
+        # self.gcnn3 = tf.keras.layers.Conv2D(filters=20, kernel_size=(3, 3), activation='relu')
+        # self.gcnn4 = tf.keras.layers.Conv2D(filters=20, kernel_size=(3, 3), activation='relu')
+        # self.gcnn5 = tf.keras.layers.Conv2D(filters=20, kernel_size=(3, 3), activation='relu')
+        # self.gcnn6 = tf.keras.layers.Conv2D(filters=20, kernel_size=(3, 3), activation='relu')
+        # self.gcnn7 = tf.keras.layers.Conv2D(filters=20, kernel_size=(4, 4), activation='relu')
+
+        self.gcnn1 = ConvBatchLayer(conv=Conv2D(filters=20, kernel_size=(3, 3), activation='relu'))
+        self.gcnn2 = ConvBatchLayer(conv=Conv2D(filters=20, kernel_size=(3, 3), activation='relu'))
+        self.gcnn3 = ConvBatchLayer(conv=Conv2D(filters=20, kernel_size=(3, 3), activation='relu'))
+        self.gcnn4 = ConvBatchLayer(conv=Conv2D(filters=20, kernel_size=(3, 3), activation='relu'))
+        self.gcnn5 = ConvBatchLayer(conv=Conv2D(filters=20, kernel_size=(3, 3), activation='relu'))
+        self.gcnn6 = ConvBatchLayer(conv=Conv2D(filters=20, kernel_size=(3, 3), activation='relu'))
+        self.gcnn7 = ConvBatchLayer(conv=Conv2D(filters=10, kernel_size=(4, 4), activation='relu'))
+
+    def call(self, inputs, training=None, mask=None):
+        x = self.gcnn1(inputs)
+        x = tf.nn.dropout(x, rate=0.3)
+        x = self.gcnn2(x)
+        x = tf.nn.max_pool2d(x, ksize=2, strides=2, padding=0)
+        x = self.gcnn3(x)
+        x = tf.nn.dropout(x, rate=0.3)
+        x = self.gcnn4(x)
+        x = tf.nn.dropout(x, rate=0.3)
+        x = self.gcnn5(x)
+        x = tf.nn.dropout(x, rate=0.3)
+        x = self.gcnn6(x)
+        x = tf.nn.dropout(x, rate=0.3)
+        x = self.gcnn7(x)
+
+        x = tf.math.reduce_max(x, axis=-1)
+        x = tf.math.reduce_max(x, axis=-1)
+
+        x = tf.nn.softmax(x)
+
+        return x
