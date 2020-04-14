@@ -28,7 +28,7 @@ class Z2Model(tf.keras.Model):
         x = self.gcnn1(inputs)
         x = tf.nn.dropout(x, rate=0.3)
         x = self.gcnn2(x)
-        x = tf.nn.max_pool2d(x, ksize=2, strides=2, padding=0)
+        x = tf.nn.max_pool2d(x, ksize=2, strides=2, padding="SAME")
         x = self.gcnn3(x)
         x = tf.nn.dropout(x, rate=0.3)
         x = self.gcnn4(x)
@@ -39,9 +39,6 @@ class Z2Model(tf.keras.Model):
         x = tf.nn.dropout(x, rate=0.3)
         x = self.gcnn7(x)
 
-        x = tf.math.reduce_max(x, axis=-1)
-        x = tf.math.reduce_max(x, axis=-1)
-
         x = tf.nn.softmax(x)
 
-        return x
+        return tf.squeeze(x)
