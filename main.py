@@ -1,37 +1,43 @@
+import numpy as np
 import tensorflow as tf
+from numpy import newaxis
 from tensorflow import keras
 
-
-def loss(model, loss_fn, x, y, training):
-    # training=training is needed only if there are layers with different
-    # behavior during training versus inference (e.g. Dropout).
-    y_pred = model(x, training=training)
-
-    return loss_fn(y_true=y, y_pred=y_pred), y_pred
+from models.P4Model import P4Model
 
 
 def grad(model, loss_fn, inputs, targets, training=True):
     with tf.GradientTape() as tape:
-        loss_value, y_pred = loss(model, loss_fn, inputs, targets, training)
+        y_pred = model(inputs, training=training)
+        loss_value = loss_fn(y_true=targets, y_pred=y_pred)
     return loss_value, tape.gradient(loss_value, model.trainable_variables), y_pred
 
 
 def train_model(model):
     optimizer = keras.optimizers.Adam(learning_rate=1e-3)
-    loss_fn = keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+    loss_fn = keras.losses.SparseCategoricalCrossentropy(from_logits=False)
 
     (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
 
+    x_train = x_train[..., newaxis]
+    x_test = x_test[..., newaxis]
+
+    x_train = x_train.astype(np.float32)
+    x_test = x_test.astype(np.float32)
+
+    x_train = x_train[:640]
+    y_train = y_train[:640]
+
     train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
-    train_dataset = train_dataset.shuffle(buffer_size=1024).batch(64)
+    train_dataset = train_dataset.shuffle(buffer_size=1024).batch(32)
 
     # Keep results for plotting
     train_loss_results = []
     train_accuracy_results = []
 
     # Iterate over epochs.
-    for epoch in range(3):
-        print('Start of epoch %d' % (epoch,))
+    for epoch in range(10):
+        print(f'Start of epoch {epoch + 1}')
 
         epoch_loss_avg = tf.keras.metrics.Mean()
         epoch_accuracy = tf.keras.metrics.SparseCategoricalAccuracy()
@@ -55,7 +61,7 @@ def train_model(model):
                                                                     epoch_accuracy.result()))
 
     test_accuracy = tf.keras.metrics.Accuracy()
-    test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test))
+    test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(10)
     for (x, y) in test_dataset:
         # training=False is needed only if there are layers with different
         # behavior during training versus inference (e.g. Dropout).
@@ -64,3 +70,8 @@ def train_model(model):
         test_accuracy(prediction, y)
 
     print("Test set accuracy: {:.3%}".format(test_accuracy.result()))
+
+
+if __name__ == '__main__':
+    p4_model = P4Model()
+    train_model(p4_model)
