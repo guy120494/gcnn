@@ -22,7 +22,7 @@ class Z2Model(tf.keras.Model):
         self.gcnn4 = ConvBatchLayer(conv=Conv2D(filters=20, kernel_size=(3, 3), activation='relu'))
         self.gcnn5 = ConvBatchLayer(conv=Conv2D(filters=20, kernel_size=(3, 3), activation='relu'))
         self.gcnn6 = ConvBatchLayer(conv=Conv2D(filters=20, kernel_size=(3, 3), activation='relu'))
-        self.gcnn7 = ConvBatchLayer(conv=Conv2D(filters=10, kernel_size=(4, 4), activation='relu'))
+        self.gcnn7 = ConvBatchLayer(conv=Conv2D(filters=10, kernel_size=(4, 4)))
 
     def call(self, inputs, training=None, mask=None):
         x = self.gcnn1(inputs)
