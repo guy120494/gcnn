@@ -4,6 +4,7 @@ from numpy import newaxis
 from tensorflow import keras
 
 from models.P4Model import P4Model
+from models.Z2Model import Z2Model
 
 
 def grad(model, loss_fn, inputs, targets, training=True):
@@ -56,7 +57,7 @@ def train_model(model):
         # End epoch
         train_loss_results.append(epoch_loss_avg.result())
         train_accuracy_results.append(epoch_accuracy.result())
-        print("Epoch {:03d}: Loss: {:.3f}, Accuracy: {:.3%}".format(epoch,
+        print("Epoch {:03d}: Loss: {:.3f}, Accuracy: {:.3%}".format(epoch + 1,
                                                                     epoch_loss_avg.result(),
                                                                     epoch_accuracy.result()))
 
@@ -73,5 +74,9 @@ def train_model(model):
 
 
 if __name__ == '__main__':
+    print("----- P4 MODEL -----")
     p4_model = P4Model()
     train_model(p4_model)
+    print("----- Z2 MODEL -----")
+    z2_model = Z2Model()
+    train_model(z2_model)
