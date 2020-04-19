@@ -1,3 +1,6 @@
+import random
+from typing import Tuple, Any
+
 import numpy as np
 import tensorflow as tf
 from numpy import newaxis
@@ -7,6 +10,21 @@ from models.P4Model import P4Model
 from models.Z2Model import Z2Model
 
 
+def get_mnist_data() -> Tuple[Any, Any, Any, Any]:
+    (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+
+    x_train = x_train[..., newaxis]
+    x_test = x_test[..., newaxis]
+
+    # x_train = x_train[:640]
+    # y_train = y_train[:640]
+
+    x_train = x_train.astype(np.float32)
+    x_test = x_test.astype(np.float32)
+
+    return x_train, y_train, x_test, y_test
+
+
 def grad(model, loss_fn, inputs, targets, training=True):
     with tf.GradientTape() as tape:
         y_pred = model(inputs, training=training)
@@ -14,23 +32,20 @@ def grad(model, loss_fn, inputs, targets, training=True):
     return loss_value, tape.gradient(loss_value, model.trainable_variables), y_pred
 
 
+def randomly_rotate(x):
+    number_of_rotations = random.choice([0, 1, 2, 3])
+    return tf.image.rot90(x, k=number_of_rotations)
+
+
 def train_model(model):
     optimizer = keras.optimizers.Adam(learning_rate=1e-3)
     loss_fn = keras.losses.SparseCategoricalCrossentropy(from_logits=False)
 
-    (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
-
-    x_train = x_train[..., newaxis]
-    x_test = x_test[..., newaxis]
-
-    x_train = x_train.astype(np.float32)
-    x_test = x_test.astype(np.float32)
-
-    x_train = x_train[:640]
-    y_train = y_train[:640]
-
+    x_train, y_train, x_test, y_test = get_mnist_data()
     train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
-    train_dataset = train_dataset.shuffle(buffer_size=1024).batch(32)
+    train_dataset = train_dataset.shuffle(buffer_size=1024).batch(64)
+
+    test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(64)
 
     # Keep results for plotting
     train_loss_results = []
@@ -57,15 +72,15 @@ def train_model(model):
         # End epoch
         train_loss_results.append(epoch_loss_avg.result())
         train_accuracy_results.append(epoch_accuracy.result())
-        print("Epoch {:03d}: Loss: {:.3f}, Accuracy: {:.3%}".format(epoch + 1,
-                                                                    epoch_loss_avg.result(),
-                                                                    epoch_accuracy.result()))
+        print("Epoch {}: Loss: {:.3f}, Accuracy: {:.3%}".format(epoch + 1,
+                                                                epoch_loss_avg.result(),
+                                                                epoch_accuracy.result()))
 
     test_accuracy = tf.keras.metrics.Accuracy()
-    test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(10)
     for (x, y) in test_dataset:
         # training=False is needed only if there are layers with different
         # behavior during training versus inference (e.g. Dropout).
+        x = randomly_rotate(x)
         logits = model(x, training=False)
         prediction = tf.argmax(logits, axis=1, output_type=tf.int32)
         test_accuracy(prediction, y)
