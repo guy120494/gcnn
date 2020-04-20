@@ -25,6 +25,14 @@ def get_mnist_data() -> Tuple[Any, Any, Any, Any]:
     return x_train, y_train, x_test, y_test
 
 
+def get_datasets():
+    x_train, y_train, x_test, y_test = get_mnist_data()
+    train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
+    train_dataset = train_dataset.shuffle(buffer_size=1024).batch(64)
+    test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(64)
+    return train_dataset, test_dataset
+
+
 def grad(model, loss_fn, inputs, targets, training=True):
     with tf.GradientTape() as tape:
         y_pred = model(inputs, training=training)
@@ -37,15 +45,9 @@ def randomly_rotate(x):
     return tf.image.rot90(x, k=number_of_rotations)
 
 
-def train_model(model):
+def train_model(model, train_dataset, rotate_train=False, rotate_test=False):
     optimizer = keras.optimizers.Adam(learning_rate=1e-3)
     loss_fn = keras.losses.SparseCategoricalCrossentropy(from_logits=False)
-
-    x_train, y_train, x_test, y_test = get_mnist_data()
-    train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
-    train_dataset = train_dataset.shuffle(buffer_size=1024).batch(64)
-
-    test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(64)
 
     # Keep results for plotting
     train_loss_results = []
@@ -60,6 +62,8 @@ def train_model(model):
 
         # Iterate over the batches of the dataset.
         for x_batch_train, y_true in train_dataset:
+            if rotate_train:
+                x_batch_train = randomly_rotate(x_batch_train)
             loss_value, grads, y_pred = grad(model, loss_fn, x_batch_train, y_true)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
 
@@ -76,22 +80,27 @@ def train_model(model):
                                                                 epoch_loss_avg.result(),
                                                                 epoch_accuracy.result()))
 
+
+def test_model(model, rotate_test, test_dataset):
     test_accuracy = tf.keras.metrics.Accuracy()
     for (x, y) in test_dataset:
         # training=False is needed only if there are layers with different
         # behavior during training versus inference (e.g. Dropout).
-        x = randomly_rotate(x)
+        if rotate_test:
+            x = randomly_rotate(x)
         logits = model(x, training=False)
         prediction = tf.argmax(logits, axis=1, output_type=tf.int32)
         test_accuracy(prediction, y)
-
     print("Test set accuracy: {:.3%}".format(test_accuracy.result()))
 
 
 if __name__ == '__main__':
-    print("----- P4 MODEL -----")
+    train_dataset, test_dataset = get_datasets()
+    print("\n----- P4 MODEL -----\n")
     p4_model = P4Model()
-    train_model(p4_model)
-    print("----- Z2 MODEL -----")
+    train_model(p4_model, train_dataset)
+    test_model(p4_model, rotate_test=True, test_dataset=test_dataset)
+    print("\n----- Z2 MODEL -----\n")
     z2_model = Z2Model()
-    train_model(z2_model)
+    train_model(z2_model, train_dataset)
+    test_model(z2_model, rotate_test=True, test_dataset=test_dataset)
