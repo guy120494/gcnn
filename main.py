@@ -45,7 +45,7 @@ def randomly_rotate(x):
     return tf.image.rot90(x, k=number_of_rotations)
 
 
-def train_model(model, train_dataset, rotate_train=False, rotate_test=False):
+def train_model(model, train_dataset, rotate_train=False):
     optimizer = keras.optimizers.Adam(learning_rate=1e-3)
     loss_fn = keras.losses.SparseCategoricalCrossentropy(from_logits=False)
 
@@ -81,7 +81,7 @@ def train_model(model, train_dataset, rotate_train=False, rotate_test=False):
                                                                 epoch_accuracy.result()))
 
 
-def test_model(model, rotate_test, test_dataset):
+def test_model(model, test_dataset, rotate_test):
     test_accuracy = tf.keras.metrics.Accuracy()
     for (x, y) in test_dataset:
         # training=False is needed only if there are layers with different
