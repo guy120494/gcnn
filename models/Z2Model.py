@@ -26,7 +26,7 @@ class Z2Model(tf.keras.Model):
 
     def call(self, inputs, training=None, mask=None):
         x = self.gcnn1(inputs, training=training)
-        x = tf.nn.dropout(x, rate=0.3, training=training)
+        x = tf.nn.dropout(x, rate=0.3)
         x = self.gcnn2(x, training=training)
         x = tf.nn.max_pool2d(x, ksize=2, strides=2, padding="SAME")
         x = self.gcnn3(x, training=training)
