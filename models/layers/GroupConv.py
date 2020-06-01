@@ -1,4 +1,3 @@
-import tensorflow as tf
 from groupy.gconv.tensorflow_gconv.splitgconv2d import gconv2d, gconv2d_util
 from tensorflow.keras import layers
 
@@ -23,4 +22,4 @@ class GroupConv(layers.Layer):
     def call(self, inputs, **kwargs):
         x = gconv2d(input=inputs, filter=self.w, strides=[1, 1, 1, 1], padding='SAME',
                     gconv_indices=self.gconv_indices, gconv_shape_info=self.gconv_shape_info)
-        return tf.nn.relu(x)
+        return x

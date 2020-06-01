@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow_core.python.keras.layers import Conv2D
 
-from models.ConvBatchLayer import ConvBatchLayer
+from models.layers.ConvBatchLayer import ConvBatchLayer
 
 
 class Z2Model(tf.keras.Model):
