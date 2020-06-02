@@ -7,6 +7,8 @@ from numpy import newaxis
 from tensorflow import keras
 
 from models.MnistModel import MnistModel
+from models.P4Model import P4Model
+from models.Z2Model import Z2Model
 
 
 def get_mnist_data() -> Tuple[Any, Any, Any, Any]:
@@ -21,7 +23,7 @@ def get_mnist_data() -> Tuple[Any, Any, Any, Any]:
     x_train = x_train.astype(np.float32)
     x_test = x_test.astype(np.float32)
 
-    return x_train, y_train, x_test, y_test
+    return x_train / 255.0, y_train, x_test / 255.0, y_test
 
 
 def get_datasets():
@@ -95,14 +97,14 @@ def test_model(model, test_dataset, rotate_test=False):
 
 if __name__ == '__main__':
     train_dataset, test_dataset = get_datasets()
-    # print("\n----- P4 MODEL -----\n")
-    # p4_model = P4Model()
-    # train_model(p4_model, train_dataset)
-    # test_model(p4_model, rotate_test=True, test_dataset=test_dataset)
-    # print("\n----- Z2 MODEL -----\n")
-    # z2_model = Z2Model()
-    # train_model(z2_model, train_dataset)
-    # test_model(z2_model, rotate_test=True, test_dataset=test_dataset)
+    print("\n----- P4 MODEL -----\n")
+    p4_model = P4Model()
+    train_model(p4_model, train_dataset)
+    test_model(p4_model, rotate_test=True, test_dataset=test_dataset)
+    print("\n----- Z2 MODEL -----\n")
+    z2_model = Z2Model()
+    train_model(z2_model, train_dataset)
+    test_model(z2_model, rotate_test=True, test_dataset=test_dataset)
 
     print("\n----- MNIST MODEL -----\n")
     mnist_model = MnistModel()
