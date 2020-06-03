@@ -45,7 +45,7 @@ class P4Model(tf.keras.Model):
         x = tf.nn.relu(self.gcnn1(inputs))
         # x = tf.nn.dropout(x, rate=0.3)
         x = tf.nn.relu(self.gcnn2(x))
-        x = tf.nn.max_pool2d(x, ksize=2, strides=2, padding="SAME")
+        # x = tf.nn.max_pool2d(x, ksize=2, strides=2, padding="SAME")
         x = tf.nn.relu(self.gcnn3(x))
         # x = tf.nn.dropout(x, rate=0.3)
         x = tf.nn.relu(self.gcnn4(x))
