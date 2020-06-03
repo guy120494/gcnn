@@ -10,15 +10,20 @@ def invariant_max_pooling(x, group):
         x = tf.reshape(x, [x_shape[0], x_shape[1], x_shape[2], -1, 1])
     elif group == 'C4':
         x = tf.reshape(x, [x_shape[0], x_shape[1], x_shape[2], -1, 4])
+        x = tf.unstack(x, axis=-1)
+        x[0] = tf.image.rot90(x[0], 3)
+        x[1] = tf.image.rot90(x[1], 2)
+        x[2] = tf.image.rot90(x[2], 1)
+        x = tf.stack(x, axis=-1)
     else:  # The group is D4
         x = tf.reshape(x, [x_shape[0], x_shape[1], x_shape[2], -1, 8])
     return tf.reduce_max(x, axis=[4])
 
 
-class P4Model(tf.keras.Model):
+class P4ModelInvariantMaxPooling(tf.keras.Model):
 
     def __init__(self):
-        super(P4Model, self).__init__()
+        super(P4ModelInvariantMaxPooling, self).__init__()
         # self.gcnn1 = tf.keras.layers.Conv2D(filters=10, kernel_size=(3, 3), activation='relu')
         # self.gcnn2 = tf.keras.layers.Conv2D(filters=10, kernel_size=(3, 3), activation='relu')
         # self.gcnn3 = tf.keras.layers.Conv2D(filters=10, kernel_size=(3, 3), activation='relu')
