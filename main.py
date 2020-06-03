@@ -6,7 +6,8 @@ import tensorflow as tf
 from numpy import newaxis
 from tensorflow import keras
 
-from models.P4ModelInvariantMaxPooling import P4Model, P4ModelInvariantMaxPooling
+from models.P4Model import P4Model
+from models.P4ModelInvariantMaxPooling import P4ModelInvariantMaxPooling
 from models.Z2Model import Z2Model
 
 
