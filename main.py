@@ -6,6 +6,7 @@ import tensorflow as tf
 from numpy import newaxis
 from tensorflow import keras
 
+from models.MnistModel import MnistModel
 from models.P4Model import P4Model
 from models.P4ModelInvariantMaxPooling import P4ModelInvariantMaxPooling
 from models.Z2Model import Z2Model
@@ -112,7 +113,7 @@ if __name__ == '__main__':
     train_model(z2_model, train_dataset, rotate_train=True)
     test_model(z2_model, rotate_test=True, test_dataset=test_dataset)
 
-    # print("\n----- MNIST MODEL -----\n")
-    # mnist_model = MnistModel()
-    # train_model(mnist_model, train_dataset)
-    # test_model(mnist_model, rotate_test=True, test_dataset=test_dataset)
+    print("\n----- MNIST MODEL -----\n")
+    mnist_model = MnistModel()
+    train_model(mnist_model, train_dataset)
+    test_model(mnist_model, rotate_test=True, test_dataset=test_dataset)
