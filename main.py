@@ -115,5 +115,5 @@ if __name__ == '__main__':
 
     print("\n----- MNIST MODEL -----\n")
     mnist_model = MnistModel()
-    train_model(mnist_model, train_dataset)
+    train_model(mnist_model, train_dataset, rotate_train=True)
     test_model(mnist_model, rotate_test=True, test_dataset=test_dataset)
