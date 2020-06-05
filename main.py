@@ -15,6 +15,12 @@ from models.Z2Model import Z2Model
 def get_mnist_data() -> Tuple[Any, Any, Any, Any]:
     (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
 
+    x_train = x_train[y_train != 9]
+    y_train = y_train[y_train != 9]
+
+    x_test = x_test[y_test != 9]
+    y_test = y_test[y_test != 9]
+
     x_train = x_train[..., newaxis]
     x_test = x_test[..., newaxis]
 
