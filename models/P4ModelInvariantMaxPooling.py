@@ -1,6 +1,8 @@
 import tensorflow as tf
+from tensorflow_core.python.keras import Sequential
 
 from models.layers.GroupConv import GroupConv
+from models.layers.InvariantPoolingLayer import InvariantPoolingLayer
 
 
 def invariant_max_pooling(x, group):
@@ -41,28 +43,45 @@ class P4ModelInvariantMaxPooling(tf.keras.Model):
         self.gcnn6 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=3)
 
         self.gcnn7 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=4)
-
+        self.invariant_pooling = InvariantPoolingLayer()
         self.flatten = tf.keras.layers.Flatten()
 
-        self.dense = tf.keras.layers.Dense(units=10)
+        self.dense = tf.keras.layers.Dense(units=10, activation="softmax")
+
+        self.relu = tf.keras.layers.ReLU()
 
     def call(self, inputs, training=None, mask=None):
-        x = tf.nn.relu(self.gcnn1(inputs))
+        x = self.relu(self.gcnn1(inputs))
         # x = tf.nn.dropout(x, rate=0.3)
-        x = tf.nn.relu(self.gcnn2(x))
+        x = self.relu(self.gcnn2(x))
         # x = tf.nn.max_pool2d(x, ksize=2, strides=2, padding="SAME")
-        x = tf.nn.relu(self.gcnn3(x))
+        x = self.relu(self.gcnn3(x))
         # x = tf.nn.dropout(x, rate=0.3)
-        x = tf.nn.relu(self.gcnn4(x))
+        x = self.relu(self.gcnn4(x))
         # x = tf.nn.dropout(x, rate=0.3)
-        x = tf.nn.relu(self.gcnn5(x))
+        x = self.relu(self.gcnn5(x))
         # x = tf.nn.dropout(x, rate=0.3)
-        x = tf.nn.relu(self.gcnn6(x))
+        x = self.relu(self.gcnn6(x))
         # x = tf.nn.dropout(x, rate=0.3)
-        x = tf.nn.relu(self.gcnn7(x))
-        x = invariant_max_pooling(x, 'C4')
+        x = self.relu(self.gcnn7(x))
+        x = self.invariant_pooling(x, group='C4')
         x = self.flatten(x)
         x = self.dense(x)
-        x = tf.nn.softmax(x)
 
         return tf.squeeze(x)
+
+
+if __name__ == '__main__':
+    p4_model_invariant_max_pooling = P4ModelInvariantMaxPooling()
+    input_tensor = tf.random.uniform(shape=(1, 5, 5, 1))
+
+    invariant_layers = p4_model_invariant_max_pooling.layers[:8]
+
+    check_invariance_model = Sequential(invariant_layers)
+
+    result = check_invariance_model(input_tensor, training=False)
+
+    rotated_input = tf.image.rot90(input_tensor, 4)
+    rotated_result = check_invariance_model(input_tensor, training=False)
+
+    print(tf.reduce_all(tf.math.equal(result, rotated_result)))
