@@ -4,17 +4,17 @@ from tensorflow.keras import layers
 
 class InvariantPoolingLayer(layers.Layer):
 
-    def __init__(self):
+    def __init__(self, group):
         super(InvariantPoolingLayer, self).__init__()
+        self.group = group
 
     def call(self, inputs, **kwargs):
-        group = kwargs.get("group")
         # coset max-pool
         x_shape = tf.shape(inputs).numpy()
 
-        if group == 'Z2':
+        if self.group == 'Z2':
             x = tf.reshape(inputs, [x_shape[0], x_shape[1], x_shape[2], -1, 1])
-        elif group == 'C4':
+        elif self.group == 'C4':
             x = tf.reshape(inputs, [x_shape[0], x_shape[1], x_shape[2], -1, 4])
             x = tf.unstack(x, axis=-1)
             x[0] = tf.image.rot90(x[0], 3)

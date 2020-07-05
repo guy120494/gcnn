@@ -5,6 +5,7 @@ import numpy as np
 import tensorflow as tf
 from numpy import newaxis
 from tensorflow import keras
+from tensorflow_core.python.keras import Sequential
 
 from models.P4ModelInvariantMaxPooling import P4ModelInvariantMaxPooling
 
@@ -92,24 +93,38 @@ def test_model(model, test_dataset, rotate_test=False):
         # training=False is needed only if there are layers with different
         # behavior during training versus inference (e.g. Dropout).
         if rotate_test:
-            x = randomly_rotate(x)
-        logits = model(x, training=False)
-        prediction = tf.argmax(logits, axis=1, output_type=tf.int32)
-        test_accuracy(prediction, y)
-    print("Test set accuracy: {:.3%}".format(test_accuracy.result()))
+            x_rotated = randomly_rotate(x)
+            result = model(x, training=False)
+            rotated_result = model(x_rotated, training=False)
+
+            # is_invariant = np.allclose(result.numpy(), rotated_result.numpy())
+            is_invariant = np.any(tf.reduce_all(tf.math.equal(result, rotated_result)).numpy())
+
+            if not is_invariant:
+                raise Exception(x)
+
+    print("All is invariant")
 
 
 if __name__ == '__main__':
     train_dataset, test_dataset = get_datasets()
-    print("\n----- P4 MODEL INVARIANT POOLING NOT ROTATED TRAIN-----\n")
     p4_model_invariant_max_pooling = P4ModelInvariantMaxPooling()
-    train_model(p4_model_invariant_max_pooling, train_dataset)
-    test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
 
-    print("\n----- P4 MODEL INVARIANT POOLING ROTATED TRAIN-----\n")
-    p4_model_invariant_max_pooling = P4ModelInvariantMaxPooling()
-    train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=True)
-    test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
+    invariant_layers = p4_model_invariant_max_pooling.layers[:8]
+    check_invariance_model = Sequential(invariant_layers)
+
+    test_model(check_invariance_model, rotate_test=True, test_dataset=test_dataset)
+
+    # train_dataset, test_dataset = get_datasets()
+    # print("\n----- P4 MODEL INVARIANT POOLING NOT ROTATED TRAIN-----\n")
+    # p4_model_invariant_max_pooling = P4ModelInvariantMaxPooling()
+    # train_model(p4_model_invariant_max_pooling, train_dataset)
+    # test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
+    #
+    # print("\n----- P4 MODEL INVARIANT POOLING ROTATED TRAIN-----\n")
+    # p4_model_invariant_max_pooling = P4ModelInvariantMaxPooling()
+    # train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=True)
+    # test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
 
     # print("\n----- P4 MODEL EQUIVARIANT POOLING-----\n")
     # p4_model = P4Model()

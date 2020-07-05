@@ -13,9 +13,9 @@ def invariant_max_pooling(x, group):
     elif group == 'C4':
         x = tf.reshape(x, [x_shape[0], x_shape[1], x_shape[2], -1, 4])
         x = tf.unstack(x, axis=-1)
-        x[0] = tf.image.rot90(x[0], 3)
-        x[1] = tf.image.rot90(x[1], 2)
-        x[2] = tf.image.rot90(x[2], 1)
+        x[1] = tf.image.rot90(x[0], 3)
+        x[2] = tf.image.rot90(x[1], 2)
+        x[3] = tf.image.rot90(x[2], 1)
         x = tf.stack(x, axis=-1)
     else:  # The group is D4
         x = tf.reshape(x, [x_shape[0], x_shape[1], x_shape[2], -1, 8])
@@ -43,7 +43,7 @@ class P4ModelInvariantMaxPooling(tf.keras.Model):
         self.gcnn6 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=3)
 
         self.gcnn7 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=4)
-        self.invariant_pooling = InvariantPoolingLayer()
+        self.invariant_pooling = InvariantPoolingLayer('C4')
         self.flatten = tf.keras.layers.Flatten()
 
         self.dense = tf.keras.layers.Dense(units=10, activation="softmax")
@@ -64,7 +64,7 @@ class P4ModelInvariantMaxPooling(tf.keras.Model):
         x = self.relu(self.gcnn6(x))
         # x = tf.nn.dropout(x, rate=0.3)
         x = self.relu(self.gcnn7(x))
-        x = self.invariant_pooling(x, group='C4')
+        x = self.invariant_pooling(x)
         x = self.flatten(x)
         x = self.dense(x)
 
@@ -73,7 +73,7 @@ class P4ModelInvariantMaxPooling(tf.keras.Model):
 
 if __name__ == '__main__':
     p4_model_invariant_max_pooling = P4ModelInvariantMaxPooling()
-    input_tensor = tf.random.uniform(shape=(1, 5, 5, 1))
+    input_tensor = tf.random.uniform(shape=(2, 5, 5, 1))
 
     invariant_layers = p4_model_invariant_max_pooling.layers[:8]
 
@@ -84,4 +84,5 @@ if __name__ == '__main__':
     rotated_input = tf.image.rot90(input_tensor, 4)
     rotated_result = check_invariance_model(input_tensor, training=False)
 
-    print(tf.reduce_all(tf.math.equal(result, rotated_result)))
+    a = tf.reduce_all(tf.math.equal(result, rotated_result))
+    print(a)

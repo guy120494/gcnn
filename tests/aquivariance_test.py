@@ -1,7 +1,11 @@
+import os
+
 import groupy.garray.C4_array as C4a
+import numpy as np
 import tensorflow as tf
 from groupy.gfunc.p4func_array import P4FuncArray
 from groupy.gfunc.z2func_array import Z2FuncArray
+from numpy import newaxis
 
 from models.layers.GroupConv import GroupConv
 
@@ -14,13 +18,6 @@ class EquivarianceTest(tf.test.TestCase):
 
         input_tensor = tf.random.uniform(shape=(1, 5, 5, 1))
         self.check_equivariance(input_tensor, layer, Z2FuncArray, P4FuncArray, C4a)
-
-        output_tensor = layer(input_tensor)
-
-        rotated_input = tf.image.rot90(input_tensor)
-        rotated_output = layer(rotated_input)
-
-        self.assertAllClose(rotated_output, tf.image.rot90(output_tensor), rtol=1e-5, atol=1e-3)
 
     def check_equivariance(self, im, layer, input_array, output_array, point_group):
         # Transform the image
@@ -46,14 +43,17 @@ class EquivarianceTest(tf.test.TestCase):
         layer = GroupConv(input_gruop='Z2', output_group='C4',
                           input_channels=1, output_channels=1, ksize=3)
 
-        input_tensor = tf.random.uniform(shape=(1, 5, 5, 1))
+        input_tensor = np.load(os.path.join(os.path.abspath(os.pardir), 'image.npy'))
+
+        input_tensor = input_tensor[0, :, :, :]
+        input_tensor = input_tensor[newaxis, ...]
 
         layer1 = layer(input_tensor)
         output = self.plane_group_spatial_max_pooling(layer1, 'C4').numpy()
         layer1_rotated = layer(tf.image.rot90(input_tensor))
         rotated = self.plane_group_spatial_max_pooling(layer1_rotated, 'C4').numpy()
 
-        print("Done")
+        assert np.array_equal(output, rotated)
 
     def plane_group_spatial_max_pooling(self, x, group):
         # coset max-pool
@@ -63,9 +63,9 @@ class EquivarianceTest(tf.test.TestCase):
         elif group == 'C4':
             x = tf.reshape(x, [x_shape[0], x_shape[1], x_shape[2], -1, 4])
             x = tf.unstack(x, axis=-1)
-            x[0] = tf.image.rot90(x[0], 3)
-            x[1] = tf.image.rot90(x[1], 2)
-            x[2] = tf.image.rot90(x[2], 1)
+            x[1] = tf.image.rot90(x[0], 3)
+            x[2] = tf.image.rot90(x[1], 2)
+            x[3] = tf.image.rot90(x[2], 1)
             x = tf.stack(x, axis=-1)
         else:  # The group is D4
             x = tf.reshape(x, [x_shape[0], x_shape[1], x_shape[2], -1, 8])
