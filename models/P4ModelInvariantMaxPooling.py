@@ -5,23 +5,6 @@ from models.layers.GroupConv import GroupConv
 from models.layers.InvariantPoolingLayer import InvariantPoolingLayer
 
 
-def invariant_max_pooling(x, group):
-    # coset max-pool
-    x_shape = tf.shape(x).numpy()
-    if group == 'Z2':
-        x = tf.reshape(x, [x_shape[0], x_shape[1], x_shape[2], -1, 1])
-    elif group == 'C4':
-        x = tf.reshape(x, [x_shape[0], x_shape[1], x_shape[2], -1, 4])
-        x = tf.unstack(x, axis=-1)
-        x[1] = tf.image.rot90(x[0], 3)
-        x[2] = tf.image.rot90(x[1], 2)
-        x[3] = tf.image.rot90(x[2], 1)
-        x = tf.stack(x, axis=-1)
-    else:  # The group is D4
-        x = tf.reshape(x, [x_shape[0], x_shape[1], x_shape[2], -1, 8])
-    return tf.reduce_max(x, axis=[4])
-
-
 class P4ModelInvariantMaxPooling(tf.keras.Model):
 
     def __init__(self):
@@ -41,8 +24,8 @@ class P4ModelInvariantMaxPooling(tf.keras.Model):
         self.gcnn4 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=3)
         self.gcnn5 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=3)
         self.gcnn6 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=3)
-
-        self.gcnn7 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=4)
+        #
+        # self.gcnn7 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=4)
         self.invariant_pooling = InvariantPoolingLayer('C4')
         self.flatten = tf.keras.layers.Flatten()
 
@@ -73,16 +56,14 @@ class P4ModelInvariantMaxPooling(tf.keras.Model):
 
 if __name__ == '__main__':
     p4_model_invariant_max_pooling = P4ModelInvariantMaxPooling()
-    input_tensor = tf.random.uniform(shape=(2, 5, 5, 1))
+    input_tensor = tf.random.uniform(shape=(1, 5, 5, 1))
 
-    invariant_layers = p4_model_invariant_max_pooling.layers[:8]
+    invariant_layers = p4_model_invariant_max_pooling.layers[:7]
 
     check_invariance_model = Sequential(invariant_layers)
 
     result = check_invariance_model(input_tensor, training=False)
 
-    rotated_input = tf.image.rot90(input_tensor, 4)
-    rotated_result = check_invariance_model(input_tensor, training=False)
-
-    a = tf.reduce_all(tf.math.equal(result, rotated_result))
-    print(a)
+    rotated_input = tf.image.rot90(input_tensor, 1)
+    rotated_result = check_invariance_model(rotated_input, training=False)
+    print(tf.math.reduce_max(tf.abs(tf.subtract(result, rotated_result))) < 10 ** -7)
