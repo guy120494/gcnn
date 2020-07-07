@@ -42,7 +42,7 @@ class P4ModelInvariantMaxPooling(tf.keras.Model):
         self.gcnn5 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=3)
         self.gcnn6 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=3)
 
-        self.gcnn7 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=4)
+        self.gcnn7 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=3)
         self.invariant_pooling = InvariantPoolingLayer()
         self.flatten = tf.keras.layers.Flatten()
 
