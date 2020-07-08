@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow_core.python.keras.layers import Conv2D
+from tensorflow_core.python.keras.layers import Conv2D, Flatten, Dense
 
 from models.layers.ConvBatchLayer import ConvBatchLayer
 
@@ -22,7 +22,9 @@ class Z2Model(tf.keras.Model):
         self.gcnn4 = ConvBatchLayer(conv=Conv2D(filters=20, kernel_size=(3, 3), activation='relu'))
         self.gcnn5 = ConvBatchLayer(conv=Conv2D(filters=20, kernel_size=(3, 3), activation='relu'))
         self.gcnn6 = ConvBatchLayer(conv=Conv2D(filters=20, kernel_size=(3, 3), activation='relu'))
-        self.gcnn7 = ConvBatchLayer(conv=Conv2D(filters=10, kernel_size=(3, 3)))
+        self.gcnn7 = ConvBatchLayer(conv=Conv2D(filters=9, kernel_size=(3, 3)))
+        self.flatten = Flatten()
+        self.dense = Dense(9, activation='relu')
 
     def call(self, inputs, training=None, mask=None):
         x = self.gcnn1(inputs, training=training)
@@ -38,7 +40,8 @@ class Z2Model(tf.keras.Model):
         x = self.gcnn6(x, training=training)
         x = tf.nn.dropout(x, rate=0.3)
         x = self.gcnn7(x, training=training)
-
+        x = self.flatten(x)
+        x = self.dense(x)
         x = tf.nn.softmax(x)
 
         return tf.squeeze(x)
