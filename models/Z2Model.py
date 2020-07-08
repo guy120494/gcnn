@@ -24,7 +24,7 @@ class Z2Model(tf.keras.Model):
         self.gcnn6 = ConvBatchLayer(conv=Conv2D(filters=20, kernel_size=(3, 3), activation='relu'))
         self.gcnn7 = ConvBatchLayer(conv=Conv2D(filters=9, kernel_size=(3, 3)))
         self.flatten = Flatten()
-        self.dense = Dense(9, activation='relu')
+        self.dense = Dense(9)
 
     def call(self, inputs, training=None, mask=None):
         x = self.gcnn1(inputs, training=training)
