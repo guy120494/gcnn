@@ -46,7 +46,7 @@ class P4ModelInvariantMaxPooling(tf.keras.Model):
         self.invariant_pooling = InvariantPoolingLayer()
         self.flatten = tf.keras.layers.Flatten()
 
-        self.dense = tf.keras.layers.Dense(units=10, activation="softmax")
+        self.dense = tf.keras.layers.Dense(units=9)
 
         self.relu = tf.keras.layers.ReLU()
 
@@ -67,7 +67,7 @@ class P4ModelInvariantMaxPooling(tf.keras.Model):
         x = self.invariant_pooling(x, group='C4')
         x = self.flatten(x)
         x = self.dense(x)
-
+        x = tf.nn.softmax(x)
         return tf.squeeze(x)
 
 
