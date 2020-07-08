@@ -39,7 +39,7 @@ class P4Model(tf.keras.Model):
 
         self.flatten = tf.keras.layers.Flatten()
 
-        self.dense = tf.keras.layers.Dense(units=10)
+        self.dense = tf.keras.layers.Dense(units=9)
 
     def call(self, inputs, training=None, mask=None):
         x = tf.nn.relu(self.gcnn1(inputs))
