@@ -3,13 +3,16 @@ from tensorflow.keras import layers
 
 
 class GroupConv(layers.Layer):
-    def __init__(self, input_gruop, output_group, input_channels, output_channels, ksize):
+    def __init__(self, input_gruop, output_group, input_channels, output_channels, ksize, strides=[1, 1, 1, 1],
+                 padding='SAME'):
         super(GroupConv, self).__init__()
         self.ksize = ksize
         self.output_channels = output_channels
         self.input_channels = input_channels
         self.input_group = input_gruop
         self.output_group = output_group
+        self.strides = strides
+        self.padding = padding
         self.gconv_indices, self.gconv_shape_info, self.w_shape, self.w = None, None, None, None
 
     def build(self, input_shape):
@@ -20,6 +23,6 @@ class GroupConv(layers.Layer):
         self.w = self.add_weight(shape=self.w_shape, initializer='random_normal', trainable=True)
 
     def call(self, inputs, **kwargs):
-        x = gconv2d(input=inputs, filter=self.w, strides=[1, 1, 1, 1], padding='SAME',
+        x = gconv2d(input=inputs, filter=self.w, strides=self.strides, padding=self.padding,
                     gconv_indices=self.gconv_indices, gconv_shape_info=self.gconv_shape_info)
         return x
