@@ -11,6 +11,6 @@ class ConvBatchLayer(layers.Layer):
 
     def call(self, inputs, training=None):
         x = self.conv(inputs)
-        if not hasattr(x, 'activation'):
+        if not hasattr(self.conv, 'activation'):
             x = tf.nn.relu(x)
         return self.batch(x, training)
