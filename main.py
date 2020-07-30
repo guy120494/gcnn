@@ -3,24 +3,15 @@ from typing import Tuple, Any
 
 import numpy as np
 import tensorflow as tf
-from numpy import newaxis
 from tensorflow import keras
 
-from models.P4Model import P4Model
-from models.P4ModelInvariantMaxPooling import P4ModelInvariantMaxPooling
+from models.cifar10.BasicModel import BasicModel
+
+EPOCHS = 60
 
 
-def get_mnist_data() -> Tuple[Any, Any, Any, Any]:
-    (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
-
-    x_train = x_train[y_train != 9]
-    y_train = y_train[y_train != 9]
-
-    x_test = x_test[y_test != 9]
-    y_test = y_test[y_test != 9]
-
-    x_train = x_train[..., newaxis]
-    x_test = x_test[..., newaxis]
+def get_cifar_data() -> Tuple[Any, Any, Any, Any]:
+    (x_train, y_train), (x_test, y_test) = keras.datasets.cifar10.load_data()
 
     # x_train = x_train[:640]
     # y_train = y_train[:640]
@@ -32,7 +23,7 @@ def get_mnist_data() -> Tuple[Any, Any, Any, Any]:
 
 
 def get_datasets():
-    x_train, y_train, x_test, y_test = get_mnist_data()
+    x_train, y_train, x_test, y_test = get_cifar_data()
     train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
     train_dataset = train_dataset.shuffle(buffer_size=1024).batch(64)
     test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(64)
@@ -51,6 +42,19 @@ def randomly_rotate(x):
     return tf.image.rot90(x, k=number_of_rotations)
 
 
+def get_learning_rate(epoch):
+    learning_rate = 1e-3
+    if epoch > 80:
+        learning_rate *= 0.5e-3
+    elif epoch > 60:
+        learning_rate *= 1e-3
+    elif epoch > 40:
+        learning_rate *= 1e-2
+    elif epoch > 20:
+        learning_rate *= 1e-1
+    return learning_rate
+
+
 def train_model(model, train_dataset, rotate_train=False):
     optimizer = keras.optimizers.Adam(learning_rate=1e-3)
     loss_fn = keras.losses.SparseCategoricalCrossentropy(from_logits=False)
@@ -60,7 +64,9 @@ def train_model(model, train_dataset, rotate_train=False):
     train_accuracy_results = []
 
     # Iterate over epochs.
-    for epoch in range(10):
+    for epoch in range(EPOCHS):
+        lr = get_learning_rate(model)
+        tf.keras.backend.set_value(model.optimizer.lr, lr)
         print(f'Start of epoch {epoch + 1}')
 
         epoch_loss_avg = tf.keras.metrics.Mean()
@@ -102,32 +108,12 @@ def test_model(model, test_dataset, rotate_test=False):
 
 if __name__ == '__main__':
     train_dataset, test_dataset = get_datasets()
-    print("\n----- P4 MODEL INVARIANT POOLING NOT ROTATED TRAIN-----\n")
-    p4_model_invariant_max_pooling = P4ModelInvariantMaxPooling()
-    train_model(p4_model_invariant_max_pooling, train_dataset)
+    print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
+    p4_model_invariant_max_pooling = BasicModel()
+    train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=True)
     test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
 
-    # print("\n----- P4 MODEL INVARIANT POOLING ROTATED TRAIN-----\n")
-    # p4_model_invariant_max_pooling = P4ModelInvariantMaxPooling()
-    # train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=True)
-    # test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
-
-    print("\n----- P4 MODEL EQUIVARIANT POOLING NOT ROTATED TRAIN-----\n")
-    p4_model = P4Model()
-    train_model(p4_model, train_dataset)
-    test_model(p4_model, rotate_test=True, test_dataset=test_dataset)
-
-    # print("\n----- P4 MODEL EQUIVARIANT POOLING-----\n")
-    # p4_model = P4Model()
-    # train_model(p4_model, train_dataset, rotate_train=True)
-    # test_model(p4_model, rotate_test=True, test_dataset=test_dataset)
-    #
-    # print("\n----- Z2 MODEL -----\n")
-    # z2_model = Z2Model()
-    # train_model(z2_model, train_dataset, rotate_train=True)
-    # test_model(z2_model, rotate_test=True, test_dataset=test_dataset)
-    #
-    # print("\n----- MNIST MODEL -----\n")
-    # mnist_model = MnistModel()
-    # train_model(mnist_model, train_dataset, rotate_train=True)
-    # test_model(mnist_model, rotate_test=True, test_dataset=test_dataset)
+    print("\n----- P4 MODEL INVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
+    p4_model_invariant_max_pooling = BasicModel()
+    train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=False)
+    test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
