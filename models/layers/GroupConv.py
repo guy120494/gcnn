@@ -3,9 +3,11 @@ from tensorflow.keras import layers
 
 
 class GroupConv(layers.Layer):
-    def __init__(self, input_gruop, output_group, input_channels, output_channels, ksize, strides=[1, 1, 1, 1],
+    def __init__(self, input_gruop, output_group, input_channels, output_channels, ksize, strides=None,
                  padding='SAME'):
         super(GroupConv, self).__init__()
+        if strides is None:
+            strides = [1, 1, 1, 1]
         self.ksize = ksize
         self.output_channels = output_channels
         self.input_channels = input_channels
