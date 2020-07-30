@@ -65,8 +65,8 @@ def train_model(model, train_dataset, rotate_train=False):
 
     # Iterate over epochs.
     for epoch in range(EPOCHS):
-        lr = get_learning_rate(model)
-        tf.keras.backend.set_value(model.optimizer.lr, lr)
+        lr = get_learning_rate(epoch)
+        tf.keras.backend.set_value(optimizer.lr, lr)
         print(f'Start of epoch {epoch + 1}')
 
         epoch_loss_avg = tf.keras.metrics.Mean()
