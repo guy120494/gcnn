@@ -1,18 +1,7 @@
 import tensorflow as tf
 
+from models.layers.EquivariantPoolingLayer import EquivariantPoolingLayer
 from models.layers.GroupConv import GroupConv
-
-
-def equivariant_max_pooling(x, group):
-    # coset max-pool
-    x_shape = tf.shape(x).numpy()
-    if group == 'Z2':
-        x = tf.reshape(x, [x_shape[0], x_shape[1], x_shape[2], -1, 1])
-    elif group == 'C4':
-        x = tf.reshape(x, [x_shape[0], x_shape[1], x_shape[2], -1, 4])
-    else:  # The group is D4
-        x = tf.reshape(x, [x_shape[0], x_shape[1], x_shape[2], -1, 8])
-    return tf.reduce_max(x, axis=[4])
 
 
 class P4Model(tf.keras.Model):
@@ -36,7 +25,7 @@ class P4Model(tf.keras.Model):
         self.gcnn6 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=3)
 
         self.gcnn7 = GroupConv(input_gruop='C4', output_group='C4', input_channels=10, output_channels=10, ksize=3)
-
+        self.max_pooling = EquivariantPoolingLayer()
         self.flatten = tf.keras.layers.Flatten()
 
         self.dense = tf.keras.layers.Dense(units=9)
@@ -55,7 +44,7 @@ class P4Model(tf.keras.Model):
         x = tf.nn.relu(self.gcnn6(x))
         # x = tf.nn.dropout(x, rate=0.3)
         x = tf.nn.relu(self.gcnn7(x))
-        x = equivariant_max_pooling(x, 'C4')
+        x = self.max_pooling(x, 'C4')
         x = self.flatten(x)
         x = self.dense(x)
         x = tf.nn.softmax(x)
