@@ -1,7 +1,7 @@
 import tensorflow as tf
 
+from models.layers.EquivariantPoolingLayer import EquivariantPoolingLayer
 from models.layers.GroupConv import GroupConv
-from models.layers.InvariantPoolingLayer import InvariantPoolingLayer
 
 
 class BasicEquivariantModel(tf.keras.Model):
@@ -12,7 +12,7 @@ class BasicEquivariantModel(tf.keras.Model):
         self.drop1 = tf.keras.layers.Dropout(rate=0.25)
         self.conv3 = GroupConv(input_gruop='C4', output_group='C4', input_channels=32, output_channels=64, ksize=3)
         self.conv4 = GroupConv(input_gruop='C4', output_group='C4', input_channels=64, output_channels=64, ksize=3)
-        self.max_pooling = InvariantPoolingLayer()
+        self.max_pooling = EquivariantPoolingLayer()
         self.drop2 = tf.keras.layers.Dropout(rate=0.25)
         self.flat = tf.keras.layers.Flatten()
         self.dense1 = tf.keras.layers.Dense(units=1500, activation='relu')
