@@ -4,9 +4,9 @@ from models.layers.GroupConv import GroupConv
 from models.layers.InvariantPoolingLayer import InvariantPoolingLayer
 
 
-class BasicModel(tf.keras.Model):
+class BasicInvariantModel(tf.keras.Model):
     def __init__(self):
-        super(BasicModel, self).__init__()
+        super(BasicInvariantModel, self).__init__()
         self.conv1 = GroupConv(input_gruop='Z2', output_group='C4', input_channels=3, output_channels=16, ksize=3)
         self.conv2 = GroupConv(input_gruop='C4', output_group='C4', input_channels=16, output_channels=32, ksize=3)
         self.drop1 = tf.keras.layers.Dropout(rate=0.25)
