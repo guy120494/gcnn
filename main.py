@@ -6,7 +6,6 @@ import tensorflow as tf
 from tensorflow import keras
 
 from models.cifar10.BaisEquivariantModel import BasicEquivariantModel
-from models.cifar10.BasicInvariantModel import BasicInvariantModel
 
 EPOCHS = 60
 
@@ -110,15 +109,15 @@ def test_model(model, test_dataset, rotate_test=False):
 if __name__ == '__main__':
     train_dataset, test_dataset = get_datasets()
 
-    print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
-    p4_model_invariant_max_pooling = BasicInvariantModel()
-    train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=True)
-    test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
-
-    print("\n----- P4 MODEL INVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
-    p4_model_invariant_max_pooling = BasicInvariantModel()
-    train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=False)
-    test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
+    # print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
+    # p4_model_invariant_max_pooling = BasicInvariantModel()
+    # train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=True)
+    # test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
+    #
+    # print("\n----- P4 MODEL INVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
+    # p4_model_invariant_max_pooling = BasicInvariantModel()
+    # train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=False)
+    # test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
 
     print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
     p4_model_equivariant_max_pooling = BasicEquivariantModel()
