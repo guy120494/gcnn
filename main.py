@@ -1,11 +1,14 @@
 import random
-from typing import Tuple, Any
+from typing import Tuple, Any, List
 
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
+from tensorflow_core.python.keras import Model
 
 from models.cifar10.BaisEquivariantModel import BasicEquivariantModel
+from models.cifar10.BasicInvariantModel import BasicInvariantModel
 
 EPOCHS = 60
 
@@ -55,7 +58,7 @@ def get_learning_rate(epoch):
     return learning_rate
 
 
-def train_model(model, train_dataset, rotate_train=False):
+def train_model(model, train_dataset, rotate_train=False, epochs=EPOCHS):
     optimizer = keras.optimizers.Adam(learning_rate=1e-3)
     loss_fn = keras.losses.SparseCategoricalCrossentropy(from_logits=False)
 
@@ -64,10 +67,9 @@ def train_model(model, train_dataset, rotate_train=False):
     train_accuracy_results = []
 
     # Iterate over epochs.
-    for epoch in range(EPOCHS):
+    for epoch in range(epochs):
         lr = get_learning_rate(epoch)
         tf.keras.backend.set_value(optimizer.lr, lr)
-        print(f'Start of epoch {epoch + 1}')
 
         epoch_loss_avg = tf.keras.metrics.Mean()
         epoch_accuracy = tf.keras.metrics.SparseCategoricalAccuracy()
@@ -88,9 +90,10 @@ def train_model(model, train_dataset, rotate_train=False):
         # End epoch
         train_loss_results.append(epoch_loss_avg.result())
         train_accuracy_results.append(epoch_accuracy.result())
-        print("Epoch {}: Loss: {:.3f}, Accuracy: {:.3%}".format(epoch + 1,
-                                                                epoch_loss_avg.result(),
-                                                                epoch_accuracy.result()))
+        # if (epoch + 1) % 10 == 0:
+        #     print("Epoch {}: Loss: {:.3f}, Accuracy: {:.3%}".format(epoch + 1,
+        #                                                             epoch_loss_avg.result(),
+        #                                                             epoch_accuracy.result()))
 
 
 def test_model(model, test_dataset, rotate_test=False):
@@ -104,6 +107,29 @@ def test_model(model, test_dataset, rotate_test=False):
         prediction = tf.argmax(logits, axis=1, output_type=tf.int32)
         test_accuracy(prediction, y)
     print("Test set accuracy: {:.3%}".format(test_accuracy.result()))
+    return test_accuracy.result()
+
+
+def eval_model_as_epochs_function(models: List[Model], train_set, test_set, rotate_train=None, rotate_test=None,
+                                  epochs=None):
+    if epochs is None:
+        epochs = [EPOCHS]
+    if rotate_train is None:
+        rotate_train = [False for i in range(epochs)]
+    if rotate_test is None:
+        rotate_test = [True for i in range(epochs)]
+
+    result = {"Model": [], "Epochs": [], "Accuracy": []}
+    for i, model in enumerate(models):
+        for epoch in epochs:
+            copy_model = tf.keras.models.clone_model(model)
+            train_model(copy_model, train_set, rotate_train[i], epoch)
+            result.get("Model").append(model.name)
+            result.get("Epochs").append(epoch)
+            result.get("Accuracy").append(test_model(model, test_set, rotate_test[i]))
+
+    result_csv = pd.DataFrame(result)
+    result_csv.to_csv(path_or_buf="/result.csv")
 
 
 if __name__ == '__main__':
@@ -119,12 +145,18 @@ if __name__ == '__main__':
     # train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=False)
     # test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
 
-    print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
-    p4_model_equivariant_max_pooling = BasicEquivariantModel()
-    train_model(p4_model_equivariant_max_pooling, train_dataset, rotate_train=True)
-    test_model(p4_model_equivariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
+    # print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
+    # p4_model_equivariant_max_pooling = BasicEquivariantModel()
+    # train_model(p4_model_equivariant_max_pooling, train_dataset, rotate_train=True)
+    # test_model(p4_model_equivariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
+    #
+    # print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
+    # p4_model_equivariant_max_pooling = BasicEquivariantModel()
+    # train_model(p4_model_equivariant_max_pooling, train_dataset, rotate_train=False)
+    # test_model(p4_model_equivariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
 
-    print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
+    p4_model_invariant_max_pooling = BasicInvariantModel()
     p4_model_equivariant_max_pooling = BasicEquivariantModel()
-    train_model(p4_model_equivariant_max_pooling, train_dataset, rotate_train=False)
-    test_model(p4_model_equivariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
+    eval_model_as_epochs_function([p4_model_invariant_max_pooling, p4_model_equivariant_max_pooling],
+                                  train_dataset, test_dataset, rotate_train=[False, True], rotate_test=[True, True],
+                                  epochs=[1, 2, 3])
