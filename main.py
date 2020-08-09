@@ -132,9 +132,9 @@ def eval_model_as_epochs_function(models: List[Model], train_set, test_set, rota
             result.get("Accuracy").append(test_model(model, test_set, rotate_test[i]))
 
     result_csv = pd.DataFrame(result)
-    result_csv.to_csv(path_or_buf="/result.csv")
+    result_csv.to_csv(path_or_buf="result.csv")
 
-    sns.relplot(x="epochs", y="test accuracy", hue="Model", style="event",
+    sns.relplot(x="Epochs", y="Accuracy", hue="Model", style="event",
                 kind="line", data=result_csv)
 
 
