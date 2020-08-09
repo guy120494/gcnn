@@ -129,7 +129,7 @@ def eval_model_as_epochs_function(models: List[Model], train_set, test_set, rota
             train_model(copy_model, train_set, rotate_train[i], epoch)
             result.get("Model").append(model.name)
             result.get("Epochs").append(epoch)
-            result.get("Accuracy").append(test_model(model, test_set, rotate_test[i]))
+            result.get("Accuracy").append(test_model(copy_model, test_set, rotate_test[i]))
 
     result_csv = pd.DataFrame(result)
     result_csv.to_csv(path_or_buf="result.csv")
