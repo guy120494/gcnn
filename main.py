@@ -108,7 +108,7 @@ def test_model(model, test_dataset, rotate_test=False):
         prediction = tf.argmax(logits, axis=1, output_type=tf.int32)
         test_accuracy(prediction, y)
     print("Test set accuracy: {:.3%}".format(test_accuracy.result()))
-    return test_accuracy.result()
+    return test_accuracy.result().numpy()
 
 
 def eval_model_as_epochs_function(models: List[Model], train_set, test_set, rotate_train=None, rotate_test=None,
