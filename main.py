@@ -123,7 +123,7 @@ def eval_model_as_epochs_function(models: List[Model], train_set, test_set, rota
     result = {"Model": [], "Epochs": [], "Accuracy": []}
     for i, model in enumerate(models):
         for epoch in epochs:
-            print(f"Model {model}, epoch {epoch}")
+            print(f"Model {model.name}, epoch {epoch}")
             copy_model = tf.keras.models.clone_model(model)
             train_model(copy_model, train_set, rotate_train[i], epoch)
             result.get("Model").append(model.name)
