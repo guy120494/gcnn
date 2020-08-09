@@ -165,4 +165,4 @@ if __name__ == '__main__':
     p4_model_equivariant_max_pooling = BasicEquivariantModel()
     eval_model_as_epochs_function([p4_model_invariant_max_pooling, p4_model_equivariant_max_pooling],
                                   train_dataset, test_dataset, rotate_train=[False, True], rotate_test=[True, True],
-                                  epochs=[1, 2, 3])
+                                  epochs=[5, 10, 20, 30, 40])
