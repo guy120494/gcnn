@@ -1,9 +1,8 @@
 import random
-from typing import Tuple, Any, List
+from typing import Tuple, Any
 
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow_core.python.keras import Model
@@ -111,31 +110,24 @@ def test_model(model, test_dataset, rotate_test=False):
     return test_accuracy.result().numpy()
 
 
-def eval_model_as_epochs_function(models: List[Model], train_set, test_set, rotate_train=None, rotate_test=None,
-                                  epochs=None):
-    if epochs is None:
-        epochs = [EPOCHS]
-    if rotate_train is None:
-        rotate_train = [False for i in range(epochs)]
-    if rotate_test is None:
-        rotate_test = [True for i in range(epochs)]
+def eval_number_of_neurons_in_dense(model: Model, train_set, test_set, rotate_train=False, rotate_test=False,
+                                    neurons=None):
+    result = {"model": [], "neurons_in_dense": [], "accuracy": []}
+    if neurons is None:
+        neurons = [i for i in range(1000, 1501, 50)]
+    layers = model.layers
+    for i in neurons:
+        layers.pop(-3)
+        layers.insert(-2, tf.keras.layers.Dense(units=i, activation='relu'))
+        copy_model = keras.Sequential(layers)
+        train_model(copy_model, train_set, rotate_train, epochs=40)
+        accuracy = test_model(copy_model, test_set, rotate_test)
+        result["model"].append(model.name)
+        result["neurons_in_dense"].append(i)
+        result["accuracy"].append(accuracy)
 
-    result = {"Model": [], "Epochs": [], "Accuracy": []}
-    for i, model in enumerate(models):
-        for epoch in epochs:
-            print(f"{model.name}, epoch {epoch}")
-            klass = globals()[str(type(model)).split(".")[-1][0:-2]]
-            copy_model = klass()
-            train_model(copy_model, train_set, rotate_train[i], epoch)
-            result.get("Model").append(model.name)
-            result.get("Epochs").append(epoch)
-            result.get("Accuracy").append(test_model(copy_model, test_set, rotate_test[i]))
-
-    result_csv = pd.DataFrame(result)
-    result_csv.to_csv(path_or_buf="result.csv")
-
-    sns.relplot(x="Epochs", y="Accuracy", hue="Model",
-                kind="line", data=result_csv)
+    result = pd.DataFrame(data=result)
+    result.to_csv(path_or_buf=f'{model.name}.csv')
 
 
 if __name__ == '__main__':
@@ -161,8 +153,10 @@ if __name__ == '__main__':
     # train_model(p4_model_equivariant_max_pooling, train_dataset, rotate_train=False)
     # test_model(p4_model_equivariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
 
-    p4_model_invariant_max_pooling = BasicInvariantModel()
     p4_model_equivariant_max_pooling = BasicEquivariantModel()
-    eval_model_as_epochs_function([p4_model_invariant_max_pooling, p4_model_equivariant_max_pooling],
-                                  train_dataset, test_dataset, rotate_train=[False, True], rotate_test=[True, True],
-                                  epochs=[5, 10, 20, 30, 40])
+    eval_number_of_neurons_in_dense(p4_model_equivariant_max_pooling, train_dataset, test_dataset, rotate_train=True,
+                                    rotate_test=True)
+
+    p4_model_invariant_max_pooling = BasicInvariantModel()
+    eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset, rotate_train=False,
+                                    rotate_test=True)
