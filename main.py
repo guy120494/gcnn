@@ -1,4 +1,5 @@
 import random
+from copy import deepcopy
 from typing import Tuple, Any
 
 import numpy as np
@@ -21,6 +22,9 @@ def get_cifar_data() -> Tuple[Any, Any, Any, Any]:
 
     x_train = x_train.astype(np.float32)
     x_test = x_test.astype(np.float32)
+
+    # x_test = x_test[:640]
+    # y_test = y_test[:640]
 
     return x_train / 255.0, y_train, x_test / 255.0, y_test
 
@@ -115,8 +119,9 @@ def eval_number_of_neurons_in_dense(model: Model, train_set, test_set, rotate_tr
     result = {"model": [], "neurons_in_dense": [], "accuracy": []}
     if neurons is None:
         neurons = [i for i in range(1000, 1501, 50)]
-    layers = model.layers
+
     for i in neurons:
+        layers = deepcopy(model.layers)
         layers.pop(-3)
         layers.insert(-2, tf.keras.layers.Dense(units=i, activation='relu'))
         copy_model = keras.Sequential(layers)
