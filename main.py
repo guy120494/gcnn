@@ -9,7 +9,6 @@ from tensorflow import keras
 from tensorflow_core.python.keras import Model
 
 from models.cifar10.BaisEquivariantModel import BasicEquivariantModel
-from models.cifar10.BasicInvariantModel import BasicInvariantModel
 
 EPOCHS = 60
 
@@ -160,8 +159,8 @@ if __name__ == '__main__':
 
     p4_model_equivariant_max_pooling = BasicEquivariantModel()
     eval_number_of_neurons_in_dense(p4_model_equivariant_max_pooling, train_dataset, test_dataset, rotate_train=True,
-                                    rotate_test=True)
+                                    rotate_test=True, neurons=[i for i in range(1000, 1501, 100)])
 
-    p4_model_invariant_max_pooling = BasicInvariantModel()
-    eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset, rotate_train=False,
-                                    rotate_test=True)
+    # p4_model_invariant_max_pooling = BasicInvariantModel()
+    # eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset, rotate_train=False,
+    #                                 rotate_test=True)
