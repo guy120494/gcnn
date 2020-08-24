@@ -131,7 +131,7 @@ def eval_number_of_neurons_in_dense(model: Model, train_set, test_set, rotate_tr
         result["accuracy"].append(accuracy)
 
     result = pd.DataFrame(data=result)
-    result.to_csv(path_or_buf=f'{model.name}.csv')
+    result.to_csv(path_or_buf=f'./{model.name}.csv')
 
 
 if __name__ == '__main__':
