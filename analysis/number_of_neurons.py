@@ -6,8 +6,9 @@ import seaborn as sns
 def unify_equivariant_files():
     first_file = pd.read_csv('/Users/guy/Desktop/gcnn/number-of-neurons/equivariant-model-number-of-neurons-fifty.csv')
     second_file = pd.read_csv('/Users/guy/Desktop/gcnn/number-of-neurons/equivariant-model-number-of-neurons.csv')
+    third_file = pd.read_csv('/Users/guy/Desktop/gcnn/number-of-neurons/equivariant-model-500-to-1000.csv')
 
-    return pd.concat([first_file, second_file]).drop(columns=["Unnamed: 0"])
+    return pd.concat([first_file, second_file, third_file]).drop(columns=["Unnamed: 0"])
 
 
 def unify_files():
