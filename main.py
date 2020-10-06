@@ -163,4 +163,4 @@ if __name__ == '__main__':
 
     p4_model_invariant_max_pooling = BasicInvariantModel()
     eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset, rotate_train=False,
-                                    rotate_test=True, neurons=[i for i in range(500, 1001, 50)])
+                                    rotate_test=True, neurons=[i for i in range(1550, 1701, 50)])
