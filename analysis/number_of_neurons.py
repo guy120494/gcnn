@@ -1,21 +1,22 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
 
 def unify_equivariant_files():
-    first_file = pd.read_csv('/Users/guy/Desktop/gcnn/number-of-neurons/equivariant-model-number-of-neurons-fifty.csv')
-    second_file = pd.read_csv('/Users/guy/Desktop/gcnn/number-of-neurons/equivariant-model-number-of-neurons.csv')
-    third_file = pd.read_csv('/Users/guy/Desktop/gcnn/number-of-neurons/equivariant-model-500-to-1000.csv')
+    parent = Path('/Users/guy/Desktop/gcnn/number-of-neurons')
+    files = [pd.read_csv(p) for p in parent.glob("*equivariant*")]
 
-    return pd.concat([first_file, second_file, third_file]).drop(columns=["Unnamed: 0"])
+    return pd.concat(files).drop(columns=["Unnamed: 0"])
 
 
 def unify_invariant_files():
-    first_file = pd.read_csv('/Users/guy/Desktop/gcnn/number-of-neurons/invariant-model-500-to-1000.csv')
-    second_file = pd.read_csv('/Users/guy/Desktop/gcnn/number-of-neurons/invariant-model-1000-to-1500.csv')
+    parent = Path('/Users/guy/Desktop/gcnn/number-of-neurons')
+    files = [pd.read_csv(p) for p in parent.glob("*invariant*")]
 
-    return pd.concat([first_file, second_file]).drop(columns=["Unnamed: 0"])
+    return pd.concat(files).drop(columns=["Unnamed: 0"])
 
 
 def unify_files():
