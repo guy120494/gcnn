@@ -9,6 +9,7 @@ from tensorflow import keras
 from tensorflow_core.python.keras import Model
 
 from models.cifar10.BaisEquivariantModel import BasicEquivariantModel
+from models.cifar10.BasicInvariantModel import BasicInvariantModel
 
 EPOCHS = 60
 
@@ -157,10 +158,12 @@ if __name__ == '__main__':
     # train_model(p4_model_equivariant_max_pooling, train_dataset, rotate_train=False)
     # test_model(p4_model_equivariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
 
+    print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
     p4_model_equivariant_max_pooling = BasicEquivariantModel()
     eval_number_of_neurons_in_dense(p4_model_equivariant_max_pooling, train_dataset, test_dataset, rotate_train=True,
-                                    rotate_test=True, neurons=[i for i in range(1550, 1701, 50)])
+                                    rotate_test=True, neurons=[i for i in range(500, 1001, 50)])
 
-    # p4_model_invariant_max_pooling = BasicInvariantModel()
-    # eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset, rotate_train=False,
-    #                                 rotate_test=True, neurons=[i for i in range(1550, 1701, 50)])
+    print("\n----- P4 MODEL INVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
+    p4_model_invariant_max_pooling = BasicInvariantModel()
+    eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset, rotate_train=False,
+                                    rotate_test=True, neurons=[i for i in range(500, 1001, 50)])
