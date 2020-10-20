@@ -132,6 +132,8 @@ if __name__ == '__main__':
         test_accuracies = []
 
     result = pd.DataFrame(data=results)
+    print("DONE!")
+    print(results)
     result.to_csv(path_or_buf=f'./mnist_test_accuracy.csv')
 
     # print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
