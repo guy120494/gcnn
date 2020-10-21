@@ -44,7 +44,7 @@ class P4Model(tf.keras.Model):
         x = tf.nn.relu(self.gcnn6(x))
         # x = tf.nn.dropout(x, rate=0.3)
         x = tf.nn.relu(self.gcnn7(x))
-        x = self.max_pooling(x, 'C4')
+        x = self.max_pooling(x, group='C4')
         x = self.flatten(x)
         x = self.dense(x)
         x = tf.nn.softmax(x)

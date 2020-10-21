@@ -95,6 +95,7 @@ if __name__ == '__main__':
     repeats = 5
     augmentations = [True, False]
 
+    print("Z2")
     for aug in augmentations:
         for i in range(repeats):
             z2_model = Z2Model()
@@ -107,6 +108,7 @@ if __name__ == '__main__':
         results["dataset"].append("mnist")
         test_accuracies = []
 
+    print("P4")
     for aug in augmentations:
         for i in range(repeats):
             p4_model = P4Model()
@@ -119,6 +121,7 @@ if __name__ == '__main__':
         results["dataset"].append("mnist")
         test_accuracies = []
 
+    print("P4_Invariant")
     for aug in augmentations:
         for i in range(repeats):
             p4_model_invariant = P4ModelInvariantMaxPooling()
@@ -134,7 +137,7 @@ if __name__ == '__main__':
     result = pd.DataFrame(data=results)
     print("DONE!")
     print(results)
-    result.to_csv(path_or_buf=f'./mnist_test_accuracy.csv')
+    result.to_csv(path_or_buf='./mnist_test_accuracy.csv')
 
     # print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
     # p4_model_invariant_max_pooling = BasicInvariantModel()
