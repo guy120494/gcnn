@@ -9,8 +9,6 @@ from tensorflow import keras
 from tensorflow_core.python.keras import Model
 
 from model_training import train_model, test_model
-from models.P4Model import P4Model
-from models.P4ModelInvariantMaxPooling import P4ModelInvariantMaxPooling
 from models.Z2Model import Z2Model
 
 
@@ -108,36 +106,36 @@ if __name__ == '__main__':
         results["dataset"].append("mnist")
         test_accuracies = []
 
-    print("P4")
-    for aug in augmentations:
-        for i in range(repeats):
-            p4_model = P4Model()
-            train_model(p4_model, train_dataset, rotate_train=aug, epochs=100)
-            test_accuracy, _ = test_model(p4_model, test_dataset, rotate_test=True)
-            test_accuracies.append(test_accuracy)
-        results["model"].append("p4")
-        results["rotated_train"].append(aug)
-        results["avg_accuracy"].append(np.mean(test_accuracies))
-        results["dataset"].append("mnist")
-        test_accuracies = []
-
-    print("P4_Invariant")
-    for aug in augmentations:
-        for i in range(repeats):
-            p4_model_invariant = P4ModelInvariantMaxPooling()
-            train_model(p4_model_invariant, train_dataset, rotate_train=aug, epochs=100)
-            test_accuracy, _ = test_model(p4_model_invariant, test_dataset, rotate_test=True)
-            test_accuracies.append(test_accuracy)
-        results["model"].append("p4_invariant")
-        results["rotated_train"].append(aug)
-        results["avg_accuracy"].append(np.mean(test_accuracies))
-        results["dataset"].append("mnist")
-        test_accuracies = []
+    # print("P4")
+    # for aug in augmentations:
+    #     for i in range(repeats):
+    #         p4_model = P4Model()
+    #         train_model(p4_model, train_dataset, rotate_train=aug, epochs=100)
+    #         test_accuracy, _ = test_model(p4_model, test_dataset, rotate_test=True)
+    #         test_accuracies.append(test_accuracy)
+    #     results["model"].append("p4")
+    #     results["rotated_train"].append(aug)
+    #     results["avg_accuracy"].append(np.mean(test_accuracies))
+    #     results["dataset"].append("mnist")
+    #     test_accuracies = []
+    #
+    # print("P4_Invariant")
+    # for aug in augmentations:
+    #     for i in range(repeats):
+    #         p4_model_invariant = P4ModelInvariantMaxPooling()
+    #         train_model(p4_model_invariant, train_dataset, rotate_train=aug, epochs=100)
+    #         test_accuracy, _ = test_model(p4_model_invariant, test_dataset, rotate_test=True)
+    #         test_accuracies.append(test_accuracy)
+    #     results["model"].append("p4_invariant")
+    #     results["rotated_train"].append(aug)
+    #     results["avg_accuracy"].append(np.mean(test_accuracies))
+    #     results["dataset"].append("mnist")
+    #     test_accuracies = []
 
     result = pd.DataFrame(data=results)
     print("DONE!")
     print(results)
-    result.to_csv(path_or_buf='./mnist_test_accuracy.csv')
+    result.to_csv(path_or_buf='./mnist_test_accuracy_z2.csv')
 
     # print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
     # p4_model_invariant_max_pooling = BasicInvariantModel()
