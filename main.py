@@ -131,8 +131,7 @@ def eval_number_of_neurons_in_dense(model: Model, train_set, test_set, rotate_tr
         result["neurons_in_dense"].append(i)
         result["accuracy"].append(accuracy)
 
-    result = pd.DataFrame(data=result)
-    result.to_csv(path_or_buf=f'./{model.name}.csv')
+    return result
 
 
 if __name__ == '__main__':
@@ -158,12 +157,24 @@ if __name__ == '__main__':
     # train_model(p4_model_equivariant_max_pooling, train_dataset, rotate_train=False)
     # test_model(p4_model_equivariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
 
+    final_csv = {"model": [], "neurons_in_dense": [], "accuracy": []}
     print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
-    p4_model_equivariant_max_pooling = BasicEquivariantModel()
-    eval_number_of_neurons_in_dense(p4_model_equivariant_max_pooling, train_dataset, test_dataset, rotate_train=True,
-                                    rotate_test=True, neurons=[i for i in range(500, 1001, 50)])
+    for i in range(10):
+        p4_model_equivariant_max_pooling = BasicEquivariantModel()
+        result = eval_number_of_neurons_in_dense(p4_model_equivariant_max_pooling, train_dataset, test_dataset,
+                                                 rotate_train=True,
+                                                 rotate_test=True, neurons=[i for i in range(500, 1001, 50)])
+        for key in final_csv.keys():
+            final_csv[key] = final_csv[key] + result[key]
 
     print("\n----- P4 MODEL INVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
-    p4_model_invariant_max_pooling = BasicInvariantModel()
-    eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset, rotate_train=False,
-                                    rotate_test=True, neurons=[i for i in range(500, 1001, 50)])
+    for i in range(10):
+        p4_model_invariant_max_pooling = BasicInvariantModel()
+        result = eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset,
+                                                 rotate_train=False,
+                                                 rotate_test=True, neurons=[i for i in range(500, 1001, 50)])
+        for key in final_csv.keys():
+            final_csv[key] = final_csv[key] + result[key]
+
+    final_csv = pd.DataFrame(final_csv)
+    final_csv.to_csv(path_or_buf="./final_result.csv")
