@@ -31,10 +31,10 @@ def get_cifar_data() -> Tuple[Any, Any, Any, Any]:
 
 def get_datasets():
     x_train, y_train, x_test, y_test = get_cifar_data()
-    train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
-    train_dataset = train_dataset.shuffle(buffer_size=1024).batch(64)
-    test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(64)
-    return train_dataset, test_dataset
+    train_set = tf.data.Dataset.from_tensor_slices((x_train, y_train))
+    train_set = train_set.shuffle(buffer_size=1024).batch(64)
+    test_set = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(64)
+    return train_set, test_set
 
 
 def grad(model, loss_fn, inputs, targets, training=True):
@@ -62,7 +62,7 @@ def get_learning_rate(epoch):
     return learning_rate
 
 
-def train_model(model, train_dataset, rotate_train=False, epochs=EPOCHS):
+def train_model(model, train_set, rotate_train=False, epochs=EPOCHS):
     optimizer = keras.optimizers.Adam(learning_rate=1e-3)
     loss_fn = keras.losses.SparseCategoricalCrossentropy(from_logits=False)
 
@@ -79,7 +79,7 @@ def train_model(model, train_dataset, rotate_train=False, epochs=EPOCHS):
         epoch_accuracy = tf.keras.metrics.SparseCategoricalAccuracy()
 
         # Iterate over the batches of the dataset.
-        for x_batch_train, y_true in train_dataset:
+        for x_batch_train, y_true in train_set:
             if rotate_train:
                 x_batch_train = randomly_rotate(x_batch_train)
             loss_value, grads, y_pred = grad(model, loss_fn, x_batch_train, y_true)
@@ -100,9 +100,9 @@ def train_model(model, train_dataset, rotate_train=False, epochs=EPOCHS):
         #                                                             epoch_accuracy.result()))
 
 
-def test_model(model, test_dataset, rotate_test=False):
+def test_model(model, test_set, rotate_test=False):
     test_accuracy = tf.keras.metrics.Accuracy()
-    for (x, y) in test_dataset:
+    for (x, y) in test_set:
         # training=False is needed only if there are layers with different
         # behavior during training versus inference (e.g. Dropout).
         if rotate_test:
@@ -159,22 +159,22 @@ if __name__ == '__main__':
 
     final_csv = {"model": [], "neurons_in_dense": [], "accuracy": []}
     print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
-    for i in range(10):
+    for _ in range(10):
         p4_model_equivariant_max_pooling = BasicEquivariantModel()
-        result = eval_number_of_neurons_in_dense(p4_model_equivariant_max_pooling, train_dataset, test_dataset,
-                                                 rotate_train=True,
-                                                 rotate_test=True, neurons=[i for i in range(100, 2000, 50)])
+        temp_result = eval_number_of_neurons_in_dense(p4_model_equivariant_max_pooling, train_dataset, test_dataset,
+                                                      rotate_train=True,
+                                                      rotate_test=True, neurons=[i for i in range(100, 2000, 50)])
         for key in final_csv.keys():
-            final_csv[key] = final_csv[key] + result[key]
+            final_csv[key] = final_csv[key] + temp_result[key]
 
     print("\n----- P4 MODEL INVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
-    for i in range(10):
+    for _ in range(10):
         p4_model_invariant_max_pooling = BasicInvariantModel()
-        result = eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset,
-                                                 rotate_train=False,
-                                                 rotate_test=True, neurons=[i for i in range(100, 2000, 50)])
+        temp_result = eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset,
+                                                      rotate_train=False,
+                                                      rotate_test=True, neurons=[i for i in range(100, 2000, 50)])
         for key in final_csv.keys():
-            final_csv[key] = final_csv[key] + result[key]
+            final_csv[key] = final_csv[key] + temp_result[key]
 
     final_csv = pd.DataFrame(final_csv)
     final_csv.to_csv(path_or_buf="./final_result.csv")
