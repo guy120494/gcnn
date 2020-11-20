@@ -121,7 +121,8 @@ def eval_number_of_neurons_in_dense(model: Model, train_set, test_set, rotate_tr
         neurons = [i for i in range(1000, 1501, 50)]
 
     for i in neurons:
-        layers = deepcopy(model.layers)
+        layers = []
+        layers.extend([import_class_from_string(layer.__module__) for layer in model.layers])
         layers.pop(-3)
         layers.insert(-2, tf.keras.layers.Dense(units=i, activation='relu'))
         copy_model = keras.Sequential(layers)
@@ -132,6 +133,14 @@ def eval_number_of_neurons_in_dense(model: Model, train_set, test_set, rotate_tr
         result["accuracy"].append(accuracy)
 
     return result
+
+
+def import_class_from_string(path):
+    from importlib import import_module
+    module_path, _, class_name = path.rpartition('.')
+    mod = import_module(module_path)
+    klass = getattr(mod, class_name)
+    return klass
 
 
 if __name__ == '__main__':
