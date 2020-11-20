@@ -137,7 +137,7 @@ if __name__ == '__main__':
     result = pd.DataFrame(data=results)
     print("DONE!")
     print(results)
-    result.to_csv(path_or_buf='./mnist_test_accuracy_z2.csv')
+    result.to_csv(path_or_buf='./mnist_test_accuracy.csv')
 
     # print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
     # p4_model_invariant_max_pooling = BasicInvariantModel()
