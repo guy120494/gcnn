@@ -173,7 +173,7 @@ if __name__ == '__main__':
         p4_model_equivariant_max_pooling = BasicEquivariantModel()
         temp_result = eval_number_of_neurons_in_dense(p4_model_equivariant_max_pooling, train_dataset, test_dataset,
                                                       rotate_train=True,
-                                                      rotate_test=True, neurons=[i for i in range(100, 1551, 50)])
+                                                      rotate_test=True, neurons=[i for i in range(20, 401, 20)])
         for key in final_csv.keys():
             final_csv[key] = final_csv[key] + temp_result[key]
 
@@ -182,9 +182,9 @@ if __name__ == '__main__':
         p4_model_invariant_max_pooling = BasicInvariantModel()
         temp_result = eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset,
                                                       rotate_train=False,
-                                                      rotate_test=True, neurons=[i for i in range(100, 1551, 50)])
+                                                      rotate_test=True, neurons=[i for i in range(20, 401, 20)])
         for key in final_csv.keys():
             final_csv[key] = final_csv[key] + temp_result[key]
 
     final_csv = pd.DataFrame(final_csv)
-    final_csv.to_csv(path_or_buf="./final_result.csv")
+    final_csv.to_csv(path_or_buf="./final_result-small-size.csv")
