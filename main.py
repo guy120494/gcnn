@@ -15,13 +15,16 @@ EPOCHS = 60
 
 
 def get_cifar_data() -> Tuple[Any, Any, Any, Any]:
-    (x_train, y_train), (x_test, y_test) = keras.datasets.cifar10.load_data()
+    (x_train, y_train), (x_test, y_test) = keras.datasets.cifar100.load_data()
 
     # x_train = x_train[:640]
     # y_train = y_train[:640]
 
     x_train = x_train.astype(np.float32)
     x_test = x_test.astype(np.float32)
+
+    y_train = keras.utils.to_categorical(y_train)
+    y_test = keras.utils.to_categorical(y_test)
 
     # x_test = x_test[:640]
     # y_test = y_test[:640]
@@ -168,7 +171,7 @@ if __name__ == '__main__':
     # test_model(p4_model_equivariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
 
     final_csv = {"model": [], "neurons_in_dense": [], "accuracy": []}
-    print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
+    print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
     for _ in range(3):
         p4_model_equivariant_max_pooling = BasicEquivariantModel()
         temp_result = eval_number_of_neurons_in_dense(p4_model_equivariant_max_pooling, train_dataset, test_dataset,
@@ -187,4 +190,4 @@ if __name__ == '__main__':
             final_csv[key] = final_csv[key] + temp_result[key]
 
     final_csv = pd.DataFrame(final_csv)
-    final_csv.to_csv(path_or_buf="./final_result-small-size.csv")
+    final_csv.to_csv(path_or_buf="./cifar100-final-result-small-size.csv")
