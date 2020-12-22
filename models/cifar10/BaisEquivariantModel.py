@@ -5,7 +5,7 @@ from models.layers.GroupConv import GroupConv
 
 
 class BasicEquivariantModel(tf.keras.Model):
-    def __init__(self):
+    def __init__(self, number_of_labels=10):
         super(BasicEquivariantModel, self).__init__()
         self.conv1 = GroupConv(input_gruop='Z2', output_group='C4', input_channels=3, output_channels=16, ksize=3)
         self.relu1 = tf.keras.layers.ReLU()
@@ -23,7 +23,7 @@ class BasicEquivariantModel(tf.keras.Model):
         self.flat = tf.keras.layers.Flatten()
         self.dense1 = tf.keras.layers.Dense(units=1500, activation='relu')
         self.drop3 = tf.keras.layers.Dropout(rate=0.5)
-        self.dense2 = tf.keras.layers.Dense(units=10, activation='softmax')
+        self.dense2 = tf.keras.layers.Dense(units=number_of_labels, activation='softmax')
 
     def call(self, inputs, training=None, mask=None):
         x = self.conv1(inputs)
