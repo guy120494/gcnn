@@ -15,7 +15,7 @@ EPOCHS = 60
 
 
 def get_cifar_data() -> Tuple[Any, Any, Any, Any]:
-    (x_train, y_train), (x_test, y_test) = keras.datasets.cifar100.load_data()
+    (x_train, y_train), (x_test, y_test) = keras.datasets.cifar10.load_data()
 
     # x_train = x_train[:640]
     # y_train = y_train[:640]
