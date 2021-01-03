@@ -170,7 +170,7 @@ if __name__ == '__main__':
     final_csv = {"model": [], "neurons_in_dense": [], "accuracy": []}
     print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
     for _ in range(3):
-        p4_model_equivariant_max_pooling = BasicEquivariantModel(number_of_labels=100)
+        p4_model_equivariant_max_pooling = BasicEquivariantModel(number_of_labels=10)
         temp_result = eval_number_of_neurons_in_dense(p4_model_equivariant_max_pooling, train_dataset, test_dataset,
                                                       rotate_train=True,
                                                       rotate_test=True, neurons=[i for i in range(20, 41, 20)])
@@ -179,7 +179,7 @@ if __name__ == '__main__':
 
     print("\n----- P4 MODEL INVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
     for _ in range(3):
-        p4_model_invariant_max_pooling = BasicInvariantModel(number_of_labels=100)
+        p4_model_invariant_max_pooling = BasicInvariantModel(number_of_labels=10)
         temp_result = eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset,
                                                       rotate_train=False,
                                                       rotate_test=True, neurons=[i for i in range(20, 41, 20)])
