@@ -187,4 +187,4 @@ if __name__ == '__main__':
             final_csv[key] = final_csv[key] + temp_result[key]
 
     final_csv = pd.DataFrame(final_csv)
-    final_csv.to_csv(path_or_buf="./cifar100-final-result-small-size.csv")
+    final_csv.to_csv(path_or_buf="./cifar10-final-result-small-size.csv")
