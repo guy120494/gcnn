@@ -36,8 +36,7 @@ class BasicOrbitModel(tf.keras.Model):
         x = self.conv3(x)
         x = self.relu3(x)
         x = self.max2(x)
-        x = tf.reshape(x, [x.shape[0], x.shape[1], x.shape[2], -1, 4])
-        x = tf.reduce_sum(x, axis=[4])
+        x = self.compute_rotation_invariant_function(x)
         x = self.conv4(x)
         x = self.relu4(x)
         x = self.drop2(x)
@@ -46,6 +45,15 @@ class BasicOrbitModel(tf.keras.Model):
         x = self.drop3(x)
 
         return self.dense2(x)
+
+    def compute_rotation_invariant_function(self, x):
+        x = tf.reshape(x, [x.shape[0], x.shape[1], x.shape[2], -1, 4])
+        x = tf.unstack(x, axis=-1)
+        x[1] = tf.image.rot90(x[1], 3)
+        x[2] = tf.image.rot90(x[2], 2)
+        x[3] = tf.image.rot90(x[3], 1)
+        x = tf.stack(x, axis=-1)
+        return tf.reduce_sum(x, axis=-1)
 
     def get_config(self):
         pass

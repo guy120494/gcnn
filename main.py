@@ -3,13 +3,11 @@ from copy import deepcopy
 from typing import Tuple, Any
 
 import numpy as np
-import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.python.keras.models import Model
 
-from models.cifar10.BaisEquivariantModel import BasicEquivariantModel
-from models.cifar10.BasicInvariantModel import BasicInvariantModel
+from models.cifar10.BasicOrbitModel import BasicOrbitModel
 
 EPOCHS = 60
 
@@ -147,6 +145,11 @@ if __name__ == '__main__':
 
     train_dataset, test_dataset = get_datasets()
 
+    orbit_model = BasicOrbitModel()
+
+    train_model(orbit_model, train_dataset, rotate_train=False)
+    test_model(orbit_model, rotate_test=True, test_set=test_dataset)
+
     # print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
     # p4_model_invariant_max_pooling = BasicInvariantModel()
     # train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=True)
@@ -167,24 +170,24 @@ if __name__ == '__main__':
     # train_model(p4_model_equivariant_max_pooling, train_dataset, rotate_train=False)
     # test_model(p4_model_equivariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
 
-    final_csv = {"model": [], "neurons_in_dense": [], "accuracy": []}
-    print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
-    for _ in range(3):
-        p4_model_equivariant_max_pooling = BasicEquivariantModel(number_of_labels=10)
-        temp_result = eval_number_of_neurons_in_dense(p4_model_equivariant_max_pooling, train_dataset, test_dataset,
-                                                      rotate_train=True,
-                                                      rotate_test=True, neurons=[i for i in range(20, 41, 20)])
-        for key in final_csv.keys():
-            final_csv[key] = final_csv[key] + temp_result[key]
-
-    print("\n----- P4 MODEL INVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
-    for _ in range(3):
-        p4_model_invariant_max_pooling = BasicInvariantModel(number_of_labels=10)
-        temp_result = eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset,
-                                                      rotate_train=False,
-                                                      rotate_test=True, neurons=[i for i in range(20, 41, 20)])
-        for key in final_csv.keys():
-            final_csv[key] = final_csv[key] + temp_result[key]
-
-    final_csv = pd.DataFrame(final_csv)
-    final_csv.to_csv(path_or_buf="./cifar10-final-result-small-size.csv")
+    # final_csv = {"model": [], "neurons_in_dense": [], "accuracy": []}
+    # print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
+    # for _ in range(3):
+    #     p4_model_equivariant_max_pooling = BasicEquivariantModel(number_of_labels=10)
+    #     temp_result = eval_number_of_neurons_in_dense(p4_model_equivariant_max_pooling, train_dataset, test_dataset,
+    #                                                   rotate_train=True,
+    #                                                   rotate_test=True, neurons=[i for i in range(20, 41, 20)])
+    #     for key in final_csv.keys():
+    #         final_csv[key] = final_csv[key] + temp_result[key]
+    #
+    # print("\n----- P4 MODEL INVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
+    # for _ in range(3):
+    #     p4_model_invariant_max_pooling = BasicInvariantModel(number_of_labels=10)
+    #     temp_result = eval_number_of_neurons_in_dense(p4_model_invariant_max_pooling, train_dataset, test_dataset,
+    #                                                   rotate_train=False,
+    #                                                   rotate_test=True, neurons=[i for i in range(20, 41, 20)])
+    #     for key in final_csv.keys():
+    #         final_csv[key] = final_csv[key] + temp_result[key]
+    #
+    # final_csv = pd.DataFrame(final_csv)
+    # final_csv.to_csv(path_or_buf="./cifar10-final-result-small-size.csv")
