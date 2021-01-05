@@ -147,6 +147,7 @@ if __name__ == '__main__':
 
     orbit_model = BasicOrbitModel()
 
+    print("\n----- ORBIT MODEL CIFAR NOT ROTATED TRAIN-----\n")
     train_model(orbit_model, train_dataset, rotate_train=False)
     test_model(orbit_model, rotate_test=True, test_set=test_dataset)
 
