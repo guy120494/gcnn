@@ -53,7 +53,7 @@ class BasicOrbitModel(tf.keras.Model):
         x[2] = tf.image.rot90(x[2], 2)
         x[3] = tf.image.rot90(x[3], 1)
         x = tf.stack(x, axis=-1)
-        return tf.reduce_sum(x, axis=-1)
+        return tf.reduce_mean(x, axis=-1)
 
     def get_config(self):
         pass
