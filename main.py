@@ -7,7 +7,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.python.keras.models import Model
 
-from models.cifar10.BasicOrbitModel import BasicOrbitModel
+from models.cifar10.DenseEquivariantModel import DenseEquivariantModel
 
 EPOCHS = 60
 
@@ -145,11 +145,10 @@ if __name__ == '__main__':
 
     train_dataset, test_dataset = get_datasets()
 
-    orbit_model = BasicOrbitModel()
-
-    print("\n----- ORBIT MODEL CIFAR NOT ROTATED TRAIN-----\n")
-    train_model(orbit_model, train_dataset, rotate_train=False)
-    test_model(orbit_model, rotate_test=True, test_set=test_dataset)
+    print("\n-----  MODEL INVARIANT POOLING  EQUIVARIANT DENSE CIFAR NOT ROTATED TRAIN-----\n")
+    m = DenseEquivariantModel()
+    train_model(m, train_dataset)
+    test_model(m, rotate_test=True, test_set=test_dataset)
 
     # print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
     # p4_model_invariant_max_pooling = BasicInvariantModel()
