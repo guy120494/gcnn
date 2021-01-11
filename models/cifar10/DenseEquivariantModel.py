@@ -41,7 +41,7 @@ class DenseEquivariantModel(tf.keras.Model):
         x = self.drop2(x)
         x = self.flat(x)
         x = self.dense1(x)
-        # x = self.max_pooling(x, group='C4')
+        x = self.max_pooling(x, group='C4')
         x = self.drop3(x)
 
         return self.dense2(x)
