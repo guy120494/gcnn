@@ -1,8 +1,7 @@
 import tensorflow as tf
 
-from models.layers.EquivariantDense import EquivariantDense
+from models.layers.EquivariantDense import EquivariantDense, DenseMaxPooling
 from models.layers.GroupConv import GroupConv
-from models.layers.InvariantPoolingLayer import InvariantPoolingLayer
 
 
 class DenseEquivariantModel(tf.keras.Model):
@@ -22,7 +21,7 @@ class DenseEquivariantModel(tf.keras.Model):
         self.drop2 = tf.keras.layers.Dropout(rate=0.25)
         self.flat = tf.keras.layers.Flatten()
         self.dense1 = EquivariantDense(1500)
-        self.max_pooling = InvariantPoolingLayer()
+        self.max_pooling = DenseMaxPooling()
         self.drop3 = tf.keras.layers.Dropout(rate=0.5)
         self.dense2 = tf.keras.layers.Dense(units=number_of_labels, activation='softmax')
 
