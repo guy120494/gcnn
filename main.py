@@ -92,6 +92,7 @@ def train_model(model, train_set, rotate_train=False, epochs=EPOCHS):
         # End epoch
         train_loss_results.append(epoch_loss_avg.result())
         train_accuracy_results.append(epoch_accuracy.result())
+        print(f"Epoch: {epoch},  accuracy:{epoch_accuracy.result()}")
         # if (epoch + 1) % 10 == 0:
         #     print("Epoch {}: Loss: {:.3f}, Accuracy: {:.3%}".format(epoch + 1,
         #                                                             epoch_loss_avg.result(),
