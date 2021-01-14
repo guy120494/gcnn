@@ -25,13 +25,13 @@ class EquivariantDense(layers.Layer):
 
     def build(self, input_shape):
         shape = (input_shape[0], self.output_number, 8 * 8 * 256 // 4)
-        self.w1 = tf.Variable(tf.Variable(tf.initializers.GlorotUniform()(shape=shape)),
+        self.w1 = tf.Variable(tf.initializers.GlorotUniform()(shape=shape),
                               dtype="float32", trainable=True)
-        self.w2 = tf.Variable(tf.Variable(tf.initializers.GlorotUniform()(shape=shape)),
+        self.w2 = tf.Variable(tf.initializers.GlorotUniform()(shape=shape),
                               dtype="float32", trainable=True)
-        self.w3 = tf.Variable(tf.Variable(tf.initializers.GlorotUniform()(shape=shape)),
+        self.w3 = tf.Variable(tf.initializers.GlorotUniform()(shape=shape),
                               dtype="float32", trainable=True)
-        self.w4 = tf.Variable(tf.Variable(tf.initializers.GlorotUniform()(shape=shape)),
+        self.w4 = tf.Variable(tf.initializers.GlorotUniform()(shape=shape),
                               dtype="float32", trainable=True)
 
     def call(self, inputs, **kwargs):
