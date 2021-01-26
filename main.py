@@ -7,7 +7,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.python.keras.models import Model
 
-from models.cifar10.DenseEquivariantModel import DenseEquivariantModel
+from models.cifar10.DenseInvariantModel import DenseInvariantModel
 
 EPOCHS = 60
 
@@ -146,7 +146,7 @@ if __name__ == '__main__':
     train_dataset, test_dataset = get_datasets()
 
     print("\n-----  MODEL INVARIANT POOLING  EQUIVARIANT DENSE CIFAR NOT ROTATED TRAIN-----\n")
-    m = DenseEquivariantModel()
+    m = DenseInvariantModel()
     train_model(m, train_dataset)
     test_model(m, rotate_test=True, test_set=test_dataset)
 
