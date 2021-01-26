@@ -30,8 +30,8 @@ def get_cifar_data() -> Tuple[Any, Any, Any, Any]:
 def get_datasets():
     x_train, y_train, x_test, y_test = get_cifar_data()
     train_set = tf.data.Dataset.from_tensor_slices((x_train, y_train))
-    train_set = train_set.shuffle(buffer_size=1024).batch(8)
-    test_set = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(8)
+    train_set = train_set.shuffle(buffer_size=1024).batch(32)
+    test_set = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(32)
     return train_set, test_set
 
 
