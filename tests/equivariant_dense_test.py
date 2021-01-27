@@ -2,6 +2,7 @@ import tensorflow as tf
 
 from models.cifar10.DenseInvariantModel import DenseInvariantModel
 from models.layers.EquivariantDense import DenseMaxPooling, EquivariantDense
+from models.layers.GroupConv import GroupConv
 
 
 class InvariantDenseMaxPoolingTest(tf.test.TestCase):
@@ -20,9 +21,13 @@ class InvariantDenseMaxPoolingTest(tf.test.TestCase):
 class EquivariantDenseTest(tf.test.TestCase):
 
     def test_two_inputs__one_is_rotation_of_the_other__return_rotated_result(self):
-        equivariant_dense_layer = EquivariantDense(output_number=100)
-        input = tf.random.uniform(shape=(1, 8 * 8 * 256))
-        rotated_input = tf.roll(input, shift=8 * 8 * 256 // 4, axis=1)
+        equivariant_dense_layer = EquivariantDense(output_number=16)
+        group_conv = GroupConv(input_gruop='Z2', output_group='C4', input_channels=3, output_channels=1, ksize=3)
+        input = tf.random.uniform(shape=(1, 5, 5, 3))
+        rotated_input = tf.image.rot90(input)
+
+        input = group_conv(input)
+        rotated_input = group_conv(rotated_input)
 
         result = equivariant_dense_layer(input)
         result_of_rotated = equivariant_dense_layer(rotated_input)
