@@ -45,14 +45,16 @@ class EquivariantDense(layers.Layer):
 
     def call(self, inputs, **kwargs):
         w = transform_filter_2d_nhwc(w=self.w, flat_indices=self.gconv_indices, shape_info=self.gconv_shape_info)
-        w = tf.reshape(w, [w.shape[0], -1, w.shape[-1]])
-        w = tf.transpose(w, perm=[0, 2, 1])
+        w = tf.reshape(w, [-1, w.shape[-1]])
+        w = tf.transpose(w)
 
-        inputs = tf.transpose(inputs, perm=[0, 3, 1, 2])
-        inputs = tf.reshape(inputs, (inputs.shape[0], -1, inputs.shape[-1]))
-        result = tf.matmul(w, inputs)
+        inputs = tf.reshape(inputs, (inputs.shape[0], -1))
 
-        return tf.transpose(result)
+        result = []
+        for inp in tf.unstack(inputs, axis=0):
+            result.append(tf.linalg.matvec(w, inp))
+
+        return tf.stack(result)
         # first_row = tf.concat([self.w1, self.w2, self.w3, self.w4], -1)
         # W = [tf.roll(first_row, shift=i * inputs.shape[-1] // 4, axis=-1) for i in range(4)]
         # W = tf.concat(W, 1)
