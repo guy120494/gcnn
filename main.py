@@ -145,10 +145,10 @@ if __name__ == '__main__':
 
     train_dataset, test_dataset = get_datasets()
 
-    print("\n-----  MODEL INVARIANT POOLING  EQUIVARIANT DENSE CIFAR NOT ROTATED TRAIN-----\n")
-    m = DenseInvariantModel()
-    train_model(m, train_dataset)
-    test_model(m, rotate_test=True, test_set=test_dataset)
+    # print("\n-----  MODEL INVARIANT POOLING  EQUIVARIANT DENSE CIFAR NOT ROTATED TRAIN-----\n")
+    # m = DenseInvariantModel()
+    # train_model(m, train_dataset)
+    # test_model(m, rotate_test=True, test_set=test_dataset)
 
     print("\n-----  MODEL INVARIANT POOLING  EQUIVARIANT DENSE CIFAR ROTATED TRAIN-----\n")
     m = DenseInvariantModel()
