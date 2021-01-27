@@ -9,7 +9,7 @@ from tensorflow.python.keras.models import Model
 
 from models.cifar10.DenseInvariantModel import DenseInvariantModel
 
-EPOCHS = 60
+EPOCHS = 25
 
 
 def get_cifar_data() -> Tuple[Any, Any, Any, Any]:
