@@ -150,6 +150,11 @@ if __name__ == '__main__':
     train_model(m, train_dataset)
     test_model(m, rotate_test=True, test_set=test_dataset)
 
+    print("\n-----  MODEL INVARIANT POOLING  EQUIVARIANT DENSE CIFAR ROTATED TRAIN-----\n")
+    m = DenseInvariantModel()
+    train_model(m, train_dataset, rotate_train=True)
+    test_model(m, rotate_test=True, test_set=test_dataset)
+
     # print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
     # p4_model_invariant_max_pooling = BasicInvariantModel()
     # train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=True)
