@@ -7,12 +7,8 @@ from tensorflow.keras import layers
 class DenseMaxPooling(layers.Layer):
 
     def call(self, inputs, **kwargs):
-        length_of_input = inputs.shape[1]
-        shifts = [i for i in range(0, length_of_input, length_of_input // 4)]
-        result = [tf.roll(inputs, shift, axis=-1) for shift in shifts]
-        result = tf.stack(result, axis=-1)
-
-        return tf.reduce_max(result, axis=-1)
+        inputs = tf.reshape(inputs, [inputs.shape[0], -1, 4])
+        return tf.reduce_max(inputs, axis=-1)
 
 
 class EquivariantDense(layers.Layer):

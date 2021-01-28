@@ -39,7 +39,7 @@ class DenseInvariantModel(tf.keras.Model):
         # x = self.drop2(x, training=training)
         x = self.dense1(x)
         x = self.relu4(x)
-        # x = self.max_pooling(x, group='C4')
+        x = self.max_pooling(x, group='C4')
         # x = self.drop3(x, training=training)
 
         return self.dense2(x)
