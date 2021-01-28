@@ -158,22 +158,22 @@ if __name__ == '__main__':
     # print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
     # p4_model_invariant_max_pooling = BasicInvariantModel()
     # train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=True)
-    # test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
+    # test_model(p4_model_invariant_max_pooling, rotate_test=True, test_set=test_dataset)
     #
     # print("\n----- P4 MODEL INVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
     # p4_model_invariant_max_pooling = BasicInvariantModel()
     # train_model(p4_model_invariant_max_pooling, train_dataset, rotate_train=False)
-    # test_model(p4_model_invariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
+    # test_model(p4_model_invariant_max_pooling, rotate_test=True, test_set=test_dataset)
 
     # print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
     # p4_model_equivariant_max_pooling = BasicEquivariantModel()
     # train_model(p4_model_equivariant_max_pooling, train_dataset, rotate_train=True)
-    # test_model(p4_model_equivariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
+    # test_model(p4_model_equivariant_max_pooling, rotate_test=True, test_set=test_dataset)
     #
     # print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR NOT ROTATED TRAIN-----\n")
     # p4_model_equivariant_max_pooling = BasicEquivariantModel()
     # train_model(p4_model_equivariant_max_pooling, train_dataset, rotate_train=False)
-    # test_model(p4_model_equivariant_max_pooling, rotate_test=True, test_dataset=test_dataset)
+    # test_model(p4_model_equivariant_max_pooling, rotate_test=True, test_set=test_dataset)
 
     # final_csv = {"model": [], "neurons_in_dense": [], "accuracy": []}
     # print("\n----- P4 MODEL EQUIVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
