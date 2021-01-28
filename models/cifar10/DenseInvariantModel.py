@@ -19,7 +19,7 @@ class DenseInvariantModel(tf.keras.Model):
         self.conv4 = GroupConv(input_gruop='C4', output_group='C4', input_channels=64, output_channels=64, ksize=3)
         self.relu4 = tf.keras.layers.ReLU()
         self.drop2 = tf.keras.layers.Dropout(rate=0.25)
-        self.dense1 = EquivariantDense(1500)
+        self.dense1 = EquivariantDense(40)
         self.max_pooling = DenseMaxPooling()
         self.drop3 = tf.keras.layers.Dropout(rate=0.5)
         self.dense2 = tf.keras.layers.Dense(units=number_of_labels, activation='softmax')
