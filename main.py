@@ -9,6 +9,7 @@ from tensorflow import keras
 from tensorflow.python.keras.models import Model
 
 from models.cifar10.DenseInvariantModel import DenseInvariantModel
+from models.layers.EquivariantDense import EquivariantDense
 
 EPOCHS = 60
 
@@ -121,8 +122,12 @@ def eval_number_of_neurons_in_dense(model: Model, train_set, test_set, rotate_tr
 
     for i in neurons:
         layers = deepcopy(model.layers)
-        layers.pop(-3)
-        layers.insert(-2, tf.keras.layers.Dense(units=i, activation='relu'))
+        if model.name == "dense_invariant_model":
+            layers.pop(-5)
+            layers.insert(-4, EquivariantDense(output_number=i))
+        else:
+            layers.pop(-3)
+            layers.insert(-2, tf.keras.layers.Dense(units=i, activation='relu'))
         copy_model = keras.Sequential(layers)
         train_model(copy_model, train_set, rotate_train, epochs=40)
         accuracy = test_model(copy_model, test_set, rotate_test)
@@ -161,7 +166,7 @@ if __name__ == '__main__':
         invariant_dense = DenseInvariantModel(number_of_labels=10)
         temp_result = eval_number_of_neurons_in_dense(invariant_dense, train_dataset, test_dataset,
                                                       rotate_train=False,
-                                                      rotate_test=True, neurons=[i for i in range(1000, 1701, 50)])
+                                                      rotate_test=True, neurons=[i for i in range(1000, 1701, 52)])
         for key in final_csv.keys():
             final_csv[key] = final_csv[key] + temp_result[key]
 
