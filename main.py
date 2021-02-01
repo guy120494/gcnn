@@ -157,8 +157,10 @@ if __name__ == '__main__':
 
     # print("\n-----  MODEL INVARIANT POOLING  EQUIVARIANT DENSE CIFAR ROTATED TRAIN-----\n")
     m = DenseInvariantModel()
-    m.layers.pop(-5)
-    m.layers.insert(-4, EquivariantDense(output_number=100))
+    layers = deepcopy(m.layers)
+    layers.pop(-5)
+    layers.insert(-4, EquivariantDense(output_number=100))
+    m = keras.Sequential(layers)
     train_model(m, train_dataset)
     test_model(m, rotate_test=True, test_set=test_dataset)
 
