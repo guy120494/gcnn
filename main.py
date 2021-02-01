@@ -166,12 +166,12 @@ if __name__ == '__main__':
         invariant_dense = DenseInvariantModel(number_of_labels=10)
         temp_result = eval_number_of_neurons_in_dense(invariant_dense, train_dataset, test_dataset,
                                                       rotate_train=False,
-                                                      rotate_test=True, neurons=[i for i in range(20, 201, 12)])
+                                                      rotate_test=True, neurons=[i for i in range(100, 201, 12)])
         for key in final_csv.keys():
             final_csv[key] = final_csv[key] + temp_result[key]
 
     final_csv = pd.DataFrame(final_csv)
-    final_csv.to_csv(path_or_buf="./invariant-dense-20-to-200.csv")
+    final_csv.to_csv(path_or_buf="./invariant-dense-100-to-200.csv")
 
     # print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
     # p4_model_invariant_max_pooling = BasicInvariantModel()
