@@ -8,7 +8,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.python.keras.models import Model
 
-from models.cifar10.DenseInvariantModel import DenseInvariantModel
+from models.cifar10.DenseEquivariantModel import DenseEquivariantModel
 from models.layers.EquivariantDense import EquivariantDense
 
 EPOCHS = 60
@@ -125,6 +125,9 @@ def eval_number_of_neurons_in_dense(model: Model, train_set, test_set, rotate_tr
         if model.name == "dense_invariant_model":
             layers.pop(-5)
             layers.insert(-4, EquivariantDense(output_number=i))
+        elif model.name == "dense_equivariant_model":
+            layers.pop(-4)
+            layers.insert(-3, EquivariantDense(output_number=i))
         else:
             layers.pop(-3)
             layers.insert(-2, tf.keras.layers.Dense(units=i, activation='relu'))
@@ -156,16 +159,30 @@ if __name__ == '__main__':
     # train_model(m, train_dataset)
     # test_model(m, rotate_test=True, test_set=test_dataset)
 
-    print("\n-----  MODEL INVARIANT POOLING  EQUIVARIANT DENSE CIFAR ROTATED TRAIN-----\n")
+    # print("\n-----  MODEL INVARIANT POOLING  EQUIVARIANT DENSE CIFAR ROTATED TRAIN-----\n")
     # m = DenseInvariantModel()
     # train_model(m, train_dataset)
     # test_model(m, rotate_test=True, test_set=test_dataset)
+    #
+    # final_csv = {"model": [], "neurons_in_dense": [], "accuracy": []}
+    #
+    # for _ in range(3):
+    #     invariant_dense = DenseInvariantModel(number_of_labels=10)
+    #     temp_result = eval_number_of_neurons_in_dense(invariant_dense, train_dataset, test_dataset,
+    #                                                   rotate_train=True,
+    #                                                   rotate_test=True, neurons=[i for i in range(20, 201, 12)])
+    #     for key in final_csv.keys():
+    #         final_csv[key] = final_csv[key] + temp_result[key]
+    #
+    # final_csv = pd.DataFrame(final_csv)
+    # final_csv.to_csv(path_or_buf="./invariant-dense-20-to-200.csv")
 
+    print("\n-----MODEL EQUIVARIANT DENSE CIFAR ROTATED TRAIN-----\n")
     final_csv = {"model": [], "neurons_in_dense": [], "accuracy": []}
 
     for _ in range(3):
-        invariant_dense = DenseInvariantModel(number_of_labels=10)
-        temp_result = eval_number_of_neurons_in_dense(invariant_dense, train_dataset, test_dataset,
+        equivariant_dense = DenseEquivariantModel(number_of_labels=10)
+        temp_result = eval_number_of_neurons_in_dense(equivariant_dense, train_dataset, test_dataset,
                                                       rotate_train=True,
                                                       rotate_test=True, neurons=[i for i in range(20, 201, 12)])
         for key in final_csv.keys():

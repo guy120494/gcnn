@@ -1,12 +1,12 @@
 import tensorflow as tf
 
-from models.layers.EquivariantDense import EquivariantDense, DenseMaxPooling
+from models.layers.EquivariantDense import EquivariantDense
 from models.layers.GroupConv import GroupConv
 
 
-class DenseInvariantModel(tf.keras.Model):
+class DenseEquivariantModel(tf.keras.Model):
     def __init__(self, number_of_labels=10):
-        super(DenseInvariantModel, self).__init__()
+        super(DenseEquivariantModel, self).__init__()
         self.conv1 = GroupConv(input_gruop='Z2', output_group='C4', input_channels=3, output_channels=16, ksize=3)
         self.relu1 = tf.keras.layers.ReLU()
         self.conv2 = GroupConv(input_gruop='C4', output_group='C4', input_channels=16, output_channels=32, ksize=3)
@@ -21,7 +21,6 @@ class DenseInvariantModel(tf.keras.Model):
         self.drop2 = tf.keras.layers.Dropout(rate=0.25)
         self.dense1 = EquivariantDense(1500)
         self.relu5 = tf.keras.layers.ReLU()
-        self.max_pooling = DenseMaxPooling()
         self.drop3 = tf.keras.layers.Dropout(rate=0.5)
         self.dense2 = tf.keras.layers.Dense(units=number_of_labels, activation='softmax')
 
@@ -40,7 +39,6 @@ class DenseInvariantModel(tf.keras.Model):
         x = self.drop2(x, training=training)
         x = self.dense1(x)
         x = self.relu5(x)
-        x = self.max_pooling(x, group='C4')
         x = self.drop3(x, training=training)
 
         return self.dense2(x)
