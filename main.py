@@ -3,6 +3,7 @@ from copy import deepcopy
 from typing import Tuple, Any
 
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.python.keras.models import Model
