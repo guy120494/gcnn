@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from models.layers.EquivariantDense import EquivariantDense, DenseMaxPooling
+from models.layers.EquivariantDense import EquivariantDense
 from models.layers.GroupConv import GroupConv
 
 
@@ -21,7 +21,7 @@ class DenseInvariantModel(tf.keras.Model):
         self.drop2 = tf.keras.layers.Dropout(rate=0.25)
         self.dense1 = EquivariantDense(1500)
         self.relu5 = tf.keras.layers.ReLU()
-        self.max_pooling = DenseMaxPooling()
+        # self.max_pooling = DenseMaxPooling()
         self.drop3 = tf.keras.layers.Dropout(rate=0.5)
         self.dense2 = tf.keras.layers.Dense(units=number_of_labels, activation='softmax')
 
@@ -40,7 +40,7 @@ class DenseInvariantModel(tf.keras.Model):
         x = self.drop2(x, training=training)
         x = self.dense1(x)
         x = self.relu5(x)
-        x = self.max_pooling(x, group='C4')
+        # x = self.max_pooling(x, group='C4')
         x = self.drop3(x, training=training)
 
         return self.dense2(x)
