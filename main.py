@@ -3,7 +3,6 @@ from copy import deepcopy
 from typing import Tuple, Any
 
 import numpy as np
-import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.python.keras.models import Model
@@ -177,19 +176,23 @@ if __name__ == '__main__':
     # final_csv = pd.DataFrame(final_csv)
     # final_csv.to_csv(path_or_buf="./invariant-dense-20-to-200.csv")
 
-    print("\n-----MODEL EQUIVARIANT DENSE CIFAR ROTATED TRAIN-----\n")
-    final_csv = {"model": [], "neurons_in_dense": [], "accuracy": []}
+    # print("\n-----MODEL EQUIVARIANT DENSE CIFAR ROTATED TRAIN-----\n")
+    # final_csv = {"model": [], "neurons_in_dense": [], "accuracy": []}
+    #
+    # for _ in range(3):
+    #     equivariant_dense = DenseEquivariantModel(number_of_labels=10)
+    #     temp_result = eval_number_of_neurons_in_dense(equivariant_dense, train_dataset, test_dataset,
+    #                                                   rotate_train=True,
+    #                                                   rotate_test=True, neurons=[i for i in range(20, 201, 12)])
+    #     for key in final_csv.keys():
+    #         final_csv[key] = final_csv[key] + temp_result[key]
+    #
+    # final_csv = pd.DataFrame(final_csv)
+    # final_csv.to_csv(path_or_buf="./equivariant-dense-20-to-200.csv")
 
-    for _ in range(3):
-        equivariant_dense = DenseEquivariantModel(number_of_labels=10)
-        temp_result = eval_number_of_neurons_in_dense(equivariant_dense, train_dataset, test_dataset,
-                                                      rotate_train=True,
-                                                      rotate_test=True, neurons=[i for i in range(20, 201, 12)])
-        for key in final_csv.keys():
-            final_csv[key] = final_csv[key] + temp_result[key]
-
-    final_csv = pd.DataFrame(final_csv)
-    final_csv.to_csv(path_or_buf="./equivariant-dense-20-to-200.csv")
+    m = DenseEquivariantModel()
+    train_model(m, train_dataset, epochs=15)
+    test_model(m, rotate_test=True, test_set=test_dataset)
 
     # print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
     # p4_model_invariant_max_pooling = BasicInvariantModel()
