@@ -191,7 +191,7 @@ if __name__ == '__main__':
     # final_csv.to_csv(path_or_buf="./equivariant-dense-20-to-200.csv")
 
     m = DenseEquivariantModel()
-    train_model(m, train_dataset, epochs=15, rotate_train=True)
+    train_model(m, train_dataset, epochs=40, rotate_train=True)
     test_model(m, rotate_test=True, test_set=test_dataset)
 
     # print("\n----- P4 MODEL INVARIANT POOLING CIFAR ROTATED TRAIN-----\n")
