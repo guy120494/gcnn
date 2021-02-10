@@ -171,7 +171,7 @@ if __name__ == '__main__':
             final_csv[key] = final_csv[key] + temp_result[key]
 
     final_csv = pd.DataFrame(final_csv)
-    final_csv.to_csv(path_or_buf="./invariant-dense-20-to-200.csv")
+    final_csv.to_csv(path_or_buf="./invariant-dense-1000-to-1700.csv")
 
     # print("\n-----MODEL EQUIVARIANT DENSE CIFAR ROTATED TRAIN-----\n")
     # final_csv = {"model": [], "neurons_in_dense": [], "accuracy": []}
