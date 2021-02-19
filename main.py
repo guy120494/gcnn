@@ -162,13 +162,12 @@ if __name__ == '__main__':
     print("\n-----  MODEL INVARIANT POOLING  EQUIVARIANT DENSE CIFAR NOT ROTATED TRAIN-----\n")
     final_csv = {"model": [], "neurons_in_dense": [], "accuracy": []}
 
-    for _ in range(3):
-        invariant_dense = DenseInvariantModel(number_of_labels=10)
-        temp_result = eval_number_of_neurons_in_dense(invariant_dense, train_dataset, test_dataset,
-                                                      rotate_train=False,
-                                                      rotate_test=True, neurons=[i for i in range(1000, 1700, 52)])
-        for key in final_csv.keys():
-            final_csv[key] = final_csv[key] + temp_result[key]
+    invariant_dense = DenseInvariantModel(number_of_labels=10)
+    temp_result = eval_number_of_neurons_in_dense(invariant_dense, train_dataset, test_dataset,
+                                                  rotate_train=False,
+                                                  rotate_test=True, neurons=[i for i in range(1000, 1700, 52)])
+    for key in final_csv.keys():
+        final_csv[key] = final_csv[key] + temp_result[key]
 
     final_csv = pd.DataFrame(final_csv)
     final_csv.to_csv(path_or_buf="./invariant-dense-1000-to-1700.csv")
