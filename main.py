@@ -178,7 +178,7 @@ if __name__ == '__main__':
     equivariant_dense = DenseEquivariantModel(number_of_labels=10)
     temp_result = eval_number_of_neurons_in_dense(equivariant_dense, train_dataset, test_dataset,
                                                   rotate_train=True,
-                                                  rotate_test=True, neurons=[i for i in range(1000, 1700, 12)])
+                                                  rotate_test=True, neurons=[i for i in range(1000, 1700, 52)])
     for key in final_csv.keys():
         final_csv[key] = final_csv[key] + temp_result[key]
 
